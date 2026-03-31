@@ -294,6 +294,16 @@
             background: rgba(255, 180, 50, 0.15);
             color: #ffb432;
         }
+        .payment-card .price {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--text);
+        }
+        .payment-card .price small {
+            font-size: 12px;
+            font-weight: 500;
+            color: var(--text-secondary);
+        }
         .payment-card .desc {
             font-size: 13px;
             color: var(--text-secondary);
@@ -465,16 +475,18 @@
                 <h2>You're In!</h2>
                 <p>Choose your preferred payment method to complete your Encore membership.</p>
                 <div class="payment-options">
-                    <a href="https://dash.encoreio.com//purchase?password=wlenc823" class="payment-card" target="_blank">
+                    <a id="link-crypto" href="https://dash.encoreio.com//purchase?password=wlenc823" class="payment-card" target="_blank">
                         <div class="payment-icon">&#x20BF;</div>
                         <h3>Crypto</h3>
                         <span class="tag tag-recommended">RECOMMENDED</span>
+                        <span class="price" id="price-crypto">$4,310 <small>+ $390/mo</small></span>
                         <span class="desc">Pay with USDT, USDC, SOL, BTC, ETH</span>
                     </a>
-                    <a href="https://whop.com/checkout/plan_ta0njpCocuJ6t" class="payment-card" target="_blank">
+                    <a id="link-card" href="https://whop.com/checkout/plan_ta0njpCocuJ6t" class="payment-card" target="_blank">
                         <div class="payment-icon">&#128179;</div>
                         <h3>Card</h3>
                         <span class="tag tag-fee">+15% FEE</span>
+                        <span class="price" id="price-card">$4,950 <small>+ $450/mo</small></span>
                         <span class="desc">Visa, Mastercard, Apple Pay</span>
                     </a>
                 </div>
@@ -484,6 +496,22 @@
     </div>
 
     <script>
+        // ========== CONFIG (easy to change) ==========
+        const CONFIG = {
+            cryptoLink: 'https://dash.encoreio.com//purchase?password=wlenc823',
+            cardLink: 'https://whop.com/checkout/plan_ta0njpCocuJ6t',
+            cryptoPrice: '$4,310',
+            cryptoRenewal: '$390/mo',
+            cardPrice: '$4,950',
+            cardRenewal: '$450/mo',
+        };
+        // Apply config
+        document.getElementById('link-crypto').href = CONFIG.cryptoLink;
+        document.getElementById('link-card').href = CONFIG.cardLink;
+        document.getElementById('price-crypto').innerHTML = CONFIG.cryptoPrice + ' <small>+ ' + CONFIG.cryptoRenewal + '</small>';
+        document.getElementById('price-card').innerHTML = CONFIG.cardPrice + ' <small>+ ' + CONFIG.cardRenewal + '</small>';
+        // ==============================================
+
         let currentStep = 0;
         const answers = { q1: null, q2: null, q3: null };
 
