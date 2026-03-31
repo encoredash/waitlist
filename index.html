@@ -504,6 +504,7 @@
             cryptoRenewal: '$390/mo',
             cardPrice: '$4,950',
             cardRenewal: '$450/mo',
+            apiUrl: 'http://188.253.10.144:5001/waitlist',
         };
         // Apply config
         document.getElementById('link-crypto').href = CONFIG.cryptoLink;
@@ -580,7 +581,21 @@
 
         function submitForm() {
             const rejected = answers.q1 === 'no' && answers.q2 === 'no' && answers.q3 === 'none';
+            const result = rejected ? 'rejected' : 'approved';
             showStep(rejected ? 'reject' : 'payment');
+
+            fetch(CONFIG.apiUrl, {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({
+                    discord: document.getElementById('discord').value.trim(),
+                    q1: answers.q1,
+                    q2: answers.q2,
+                    q3: answers.q3,
+                    source: document.getElementById('source').value.trim(),
+                    result: result,
+                })
+            }).catch(() => {});
         }
 
         function resetForm() {
