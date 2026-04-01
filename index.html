@@ -325,7 +325,6 @@
             cardPrice: '$4,950',
             cardRenewal: '$450/mo',
             apiUrl: 'https://api.encoreio.com/waitlist',
-            partners: [],
             otherSources: ['Twitter/X', 'Discord', 'Friend'],
         };
         // Apply config
@@ -334,15 +333,24 @@
         document.getElementById('price-crypto').innerHTML = CONFIG.cryptoPrice + ' <small>+ ' + CONFIG.cryptoRenewal + '</small>';
         document.getElementById('price-card').innerHTML = CONFIG.cardPrice + ' <small>+ ' + CONFIG.cardRenewal + '</small>';
 
-        // Build source options
+        // Load partners from API and build source options
         const sourceContainer = document.getElementById('source-options');
-        CONFIG.partners.forEach(p => {
-            sourceContainer.innerHTML += `<div class="option" onclick="selectSource(this, '${p.name}')"><div class="option-dot"></div><span>${p.name}</span></div>`;
+        function buildSourceOptions(partners) {
+            sourceContainer.innerHTML = '';
+            partners.forEach(name => {
+                sourceContainer.innerHTML += `<div class="option" onclick="selectSource(this, '${name}')"><div class="option-dot"></div><span>${name}</span></div>`;
+            });
+            CONFIG.otherSources.forEach(s => {
+                sourceContainer.innerHTML += `<div class="option" onclick="selectSource(this, '${s}')"><div class="option-dot"></div><span>${s}</span></div>`;
+            });
+            sourceContainer.innerHTML += `<div class="option" onclick="selectSource(this, 'other')"><div class="option-dot"></div><span>Other</span></div>`;
+        }
+        // Load partners dynamically
+        fetch(CONFIG.apiUrl + '/partners').then(r => r.json()).then(data => {
+            buildSourceOptions(data.partners || []);
+        }).catch(() => {
+            buildSourceOptions([]);
         });
-        CONFIG.otherSources.forEach(s => {
-            sourceContainer.innerHTML += `<div class="option" onclick="selectSource(this, '${s}')"><div class="option-dot"></div><span>${s}</span></div>`;
-        });
-        sourceContainer.innerHTML += `<div class="option" onclick="selectSource(this, 'other')"><div class="option-dot"></div><span>Other</span></div>`;
         // ==============================================
 
         let currentStep = 0;
@@ -395,11 +403,6 @@
             return selectedSource;
         }
 
-        function getPartnerOwner() {
-            const partner = CONFIG.partners.find(p => p.name === selectedSource);
-            return partner ? partner.owner : '';
-        }
-
         function showStep(step) {
             document.querySelectorAll('.step').forEach(s => s.classList.remove('active'));
             if (typeof step === 'string') {
@@ -446,7 +449,6 @@
                     q2: answers.q2,
                     q3: answers.q3,
                     source: getSourceValue(),
-                    partner_owner: getPartnerOwner(),
                     result: result,
                 })
             }).catch(() => {});
