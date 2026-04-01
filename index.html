@@ -337,11 +337,11 @@
         const sourceContainer = document.getElementById('source-options');
         function buildSourceOptions(partners) {
             sourceContainer.innerHTML = '';
-            partners.forEach(name => {
-                sourceContainer.innerHTML += `<div class="option" onclick="selectSource(this, '${name}')"><div class="option-dot"></div><span>${name}</span></div>`;
-            });
             CONFIG.otherSources.forEach(s => {
                 sourceContainer.innerHTML += `<div class="option" onclick="selectSource(this, '${s}')"><div class="option-dot"></div><span>${s}</span></div>`;
+            });
+            partners.forEach(name => {
+                sourceContainer.innerHTML += `<div class="option" onclick="selectSource(this, '${name}')"><div class="option-dot"></div><span>${name}</span></div>`;
             });
             sourceContainer.innerHTML += `<div class="option" onclick="selectSource(this, 'other')"><div class="option-dot"></div><span>Other</span></div>`;
         }
