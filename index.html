@@ -337,13 +337,16 @@
         const sourceContainer = document.getElementById('source-options');
         function buildSourceOptions(partners) {
             sourceContainer.innerHTML = '';
-            CONFIG.otherSources.forEach(s => {
-                sourceContainer.innerHTML += `<div class="option" onclick="selectSource(this, '${s}')"><div class="option-dot"></div><span>${s}</span></div>`;
-            });
-            partners.forEach(name => {
-                sourceContainer.innerHTML += `<div class="option" onclick="selectSource(this, '${name}')"><div class="option-dot"></div><span>${name}</span></div>`;
-            });
-            sourceContainer.innerHTML += `<div class="option" onclick="selectSource(this, 'other')"><div class="option-dot"></div><span>Other</span></div>`;
+            function addOption(value) {
+                const div = document.createElement('div');
+                div.className = 'option';
+                div.onclick = function() { selectSource(this, value); };
+                div.innerHTML = '<div class="option-dot"></div><span>' + value.replace(/</g, '&lt;') + '</span>';
+                sourceContainer.appendChild(div);
+            }
+            CONFIG.otherSources.forEach(addOption);
+            partners.forEach(addOption);
+            addOption('other');
         }
         // Load partners dynamically
         fetch(CONFIG.apiUrl + '/partners').then(r => r.json()).then(data => {
