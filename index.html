@@ -174,13 +174,12 @@
                 <div class="progress-bar"></div>
                 <div class="progress-bar"></div>
                 <div class="progress-bar"></div>
-                <div class="progress-bar"></div>
             </div>
 
             <div class="card">
             <!-- Step 0: Login with Discord -->
             <div class="step active" data-step="0">
-                <div class="step-label">Step 1 of 7</div>
+                <div class="step-label">Step 1 of 6</div>
                 <h2>Verify your Discord</h2>
                 <p class="subtitle">We use Discord login to confirm your identity — no passwords stored. You'll be redirected to Discord, then back here to continue.</p>
                 <div class="btn-row">
@@ -191,7 +190,7 @@
 
             <!-- Step 1: Bot experience -->
             <div class="step" data-step="1">
-                <div class="step-label">Step 2 of 7</div>
+                <div class="step-label">Step 2 of 6</div>
                 <h2>Do you have experience using any bots?</h2>
                 <p class="subtitle">e.g. ticket bots, sneaker bots, etc.</p>
                 <div class="options" data-question="q1">
@@ -211,7 +210,7 @@
 
             <!-- Step 2: Ticket groups -->
             <div class="step" data-step="2">
-                <div class="step-label">Step 3 of 7</div>
+                <div class="step-label">Step 3 of 6</div>
                 <h2>Are you currently a member of any ticket groups?</h2>
                 <div class="options" data-question="q2">
                     <div class="option" onclick="selectOption(this, 'q2', 'yes')">
@@ -230,7 +229,7 @@
 
             <!-- Step 3: Sales volume -->
             <div class="step" data-step="3">
-                <div class="step-label">Step 4 of 7</div>
+                <div class="step-label">Step 4 of 6</div>
                 <h2>What is your annual ticket sales volume?</h2>
                 <div class="options" data-question="q3">
                     <div class="option" onclick="selectOption(this, 'q3', 'none')">
@@ -260,7 +259,7 @@
 
             <!-- Step 4: How found us (partners + other) -->
             <div class="step" data-step="4">
-                <div class="step-label">Step 5 of 7</div>
+                <div class="step-label">Step 5 of 6</div>
                 <h2>How did you find out about us?</h2>
                 <div class="options options-scroll" id="source-options"></div>
                 <input type="text" class="input-field other-input" id="source_other" placeholder="Please specify..." autocomplete="off">
@@ -270,34 +269,15 @@
                 </div>
             </div>
 
-            <!-- Step 5: Payment method -->
+            <!-- Step 5: Confirm -->
             <div class="step" data-step="5">
-                <div class="step-label">Step 6 of 7</div>
-                <h2>How would you like to pay if approved?</h2>
-                <p class="subtitle">Pick your preferred method — we'll send the right link in your DM.</p>
-                <div class="options" data-question="payment_method">
-                    <div class="option" onclick="selectOption(this, 'payment_method', 'crypto')">
-                        <div class="option-dot"></div><span>Crypto (USDT, USDC, SOL, BTC, ETH) — recommended</span>
-                    </div>
-                    <div class="option" onclick="selectOption(this, 'payment_method', 'card')">
-                        <div class="option-dot"></div><span>Card (Visa, Mastercard, Apple Pay) — +15% fee</span>
-                    </div>
-                </div>
-                <div class="btn-row">
-                    <button class="btn btn-back" onclick="prevStep()">Back</button>
-                    <button class="btn btn-primary" onclick="nextStep()" id="btn5" disabled>Continue</button>
-                </div>
-            </div>
-
-            <!-- Step 6: Confirm -->
-            <div class="step" data-step="6">
-                <div class="step-label">Step 7 of 7</div>
+                <div class="step-label">Step 6 of 6</div>
                 <h2>Ready to submit?</h2>
                 <p class="subtitle">Review your answers and submit your application.</p>
                 <div id="summary" style="font-size:14px; color:var(--text-secondary); line-height:1.8;"></div>
                 <div class="btn-row">
                     <button class="btn btn-back" onclick="prevStep()">Back</button>
-                    <button class="btn btn-primary" onclick="submitForm()" id="btn6">Submit</button>
+                    <button class="btn btn-primary" onclick="submitForm()" id="btn5">Submit</button>
                 </div>
             </div>
 
@@ -332,21 +312,13 @@
             <div class="step result" data-step="payment">
                 <div class="result-icon">&#127881;</div>
                 <h2>You're In!</h2>
-                <p>Choose your preferred payment method to complete your Encore membership.</p>
+                <p>Complete your Encore membership payment with crypto.</p>
                 <div class="payment-options">
-                    <a id="link-crypto" href="#" class="payment-card" target="_blank">
+                    <a id="link-crypto" href="#" class="payment-card" target="_blank" style="flex:1;">
                         <div class="payment-icon">&#x20BF;</div>
-                        <h3>Crypto</h3>
-                        <span class="tag tag-recommended">RECOMMENDED</span>
+                        <h3>Pay with Crypto</h3>
                         <span class="price" id="price-crypto"></span>
-                        <span class="desc">Pay with USDT, USDC, SOL, BTC, ETH</span>
-                    </a>
-                    <a id="link-card" href="#" class="payment-card" target="_blank">
-                        <div class="payment-icon">&#128179;</div>
-                        <h3>Card</h3>
-                        <span class="tag tag-fee">+15% FEE</span>
-                        <span class="price" id="price-card"></span>
-                        <span class="desc">Visa, Mastercard, Apple Pay</span>
+                        <span class="desc">USDT, USDC, SOL, BTC, ETH</span>
                     </a>
                 </div>
             </div>
@@ -374,9 +346,7 @@
         };
         // Apply config
         document.getElementById('link-crypto').href = CONFIG.cryptoLink;
-        document.getElementById('link-card').href = CONFIG.cardLink;
         document.getElementById('price-crypto').innerHTML = CONFIG.cryptoPrice + ' <small>+ ' + CONFIG.cryptoRenewal + '</small>';
-        document.getElementById('price-card').innerHTML = CONFIG.cardPrice + ' <small>+ ' + CONFIG.cardRenewal + '</small>';
 
         // Load partners from API and build source options
         const sourceContainer = document.getElementById('source-options');
@@ -400,12 +370,12 @@
         });
         // ==============================================
 
-        const MAX_STEP = 6;
+        const MAX_STEP = 5;
         let currentStep = 0;
         const answers = {
             q1: null, q1_details: '',
             q2: null, q2_details: '',
-            q3: null, payment_method: null,
+            q3: null,
         };
         let selectedSource = null;
         let oauthCode = null;
@@ -529,18 +499,17 @@
                 document.querySelectorAll('.progress-bar').forEach((bar, i) => {
                     bar.classList.toggle('active', i <= step);
                 });
-                if (step === 6) {
+                if (step === 5) {
                     const q1Line = answers.q1 === 'yes' && answers.q1_details
-                        ? `${answers.q1} — ${answers.q1_details}` : answers.q1;
+                        ? `yes — ${answers.q1_details}` : answers.q1;
                     const q2Line = answers.q2 === 'yes' && answers.q2_details
-                        ? `${answers.q2} — ${answers.q2_details}` : answers.q2;
+                        ? `yes — ${answers.q2_details}` : answers.q2;
                     document.getElementById('summary').innerHTML =
                         `<div><b>Discord:</b> verified ✅</div>` +
-                        `<div><b>Bot experience:</b> ${q1Line}</div>` +
-                        `<div><b>Ticket groups:</b> ${q2Line}</div>` +
+                        `<div><b>Bots:</b> ${q1Line}</div>` +
+                        `<div><b>Groups:</b> ${q2Line}</div>` +
                         `<div><b>Sales volume:</b> ${answers.q3}</div>` +
-                        `<div><b>Source:</b> ${getSourceValue()}</div>` +
-                        `<div><b>Payment method:</b> ${answers.payment_method}</div>`;
+                        `<div><b>Source:</b> ${getSourceValue()}</div>`;
                 }
             }
         }
@@ -574,7 +543,7 @@
                 showAutoReject('oauth_failed');
                 return;
             }
-            const btn = document.getElementById('btn6');
+            const btn = document.getElementById('btn5');
             if (btn) { btn.disabled = true; btn.textContent = 'Submitting...'; }
             fetch(CONFIG.apiUrl + CONFIG.submitPath, {
                 method: 'POST',
@@ -587,7 +556,6 @@
                     q2_details: answers.q2_details || '',
                     q3: answers.q3,
                     source: getSourceValue(),
-                    payment_method: answers.payment_method,
                 })
             }).then(r => r.json().then(j => ({status: r.status, body: j}))).then(({status, body}) => {
                 if (status !== 200 || body.ok === false) {
@@ -611,7 +579,7 @@
             currentStep = 0;
             answers.q1 = null; answers.q1_details = '';
             answers.q2 = null; answers.q2_details = '';
-            answers.q3 = null; answers.payment_method = null;
+            answers.q3 = null;
             selectedSource = null;
             oauthCode = null;
             document.getElementById('source_other').value = '';
