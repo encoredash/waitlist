@@ -174,23 +174,24 @@
                 <div class="progress-bar"></div>
                 <div class="progress-bar"></div>
                 <div class="progress-bar"></div>
+                <div class="progress-bar"></div>
             </div>
 
             <div class="card">
-            <!-- Step 0: Discord username + ID -->
+            <!-- Step 0: Login with Discord -->
             <div class="step active" data-step="0">
-                <div class="step-label">Step 1 of 6</div>
-                <h2>What is your Discord username?</h2>
-                <input type="text" class="input-field" id="discord" placeholder="username" autocomplete="off">
-                <input type="text" class="input-field" id="discord_id" placeholder="Discord ID (optional — helps verify purchase)" autocomplete="off">
+                <div class="step-label">Step 1 of 7</div>
+                <h2>Verify your Discord</h2>
+                <p class="subtitle">We use Discord login to confirm your identity — no passwords stored. You'll be redirected to Discord, then back here to continue.</p>
                 <div class="btn-row">
-                    <button class="btn btn-primary" onclick="nextStep()" id="btn0" disabled>Continue</button>
+                    <button class="btn btn-primary" onclick="loginWithDiscord()" id="btn0" style="background:#5865F2; color:#fff;">Login with Discord</button>
                 </div>
+                <p id="auth-status" style="font-size:13px; color:var(--text-secondary); margin-top:12px;"></p>
             </div>
 
             <!-- Step 1: Bot experience -->
             <div class="step" data-step="1">
-                <div class="step-label">Step 2 of 6</div>
+                <div class="step-label">Step 2 of 7</div>
                 <h2>Do you have experience using any bots?</h2>
                 <p class="subtitle">e.g. ticket bots, sneaker bots, etc.</p>
                 <div class="options" data-question="q1">
@@ -209,7 +210,7 @@
 
             <!-- Step 2: Ticket groups -->
             <div class="step" data-step="2">
-                <div class="step-label">Step 3 of 6</div>
+                <div class="step-label">Step 3 of 7</div>
                 <h2>Are you currently a member of any ticket groups?</h2>
                 <div class="options" data-question="q2">
                     <div class="option" onclick="selectOption(this, 'q2', 'yes')">
@@ -227,7 +228,7 @@
 
             <!-- Step 3: Sales volume -->
             <div class="step" data-step="3">
-                <div class="step-label">Step 4 of 6</div>
+                <div class="step-label">Step 4 of 7</div>
                 <h2>What is your annual ticket sales volume?</h2>
                 <div class="options" data-question="q3">
                     <div class="option" onclick="selectOption(this, 'q3', 'none')">
@@ -257,7 +258,7 @@
 
             <!-- Step 4: How found us (partners + other) -->
             <div class="step" data-step="4">
-                <div class="step-label">Step 5 of 6</div>
+                <div class="step-label">Step 5 of 7</div>
                 <h2>How did you find out about us?</h2>
                 <div class="options options-scroll" id="source-options"></div>
                 <input type="text" class="input-field other-input" id="source_other" placeholder="Please specify..." autocomplete="off">
@@ -267,15 +268,51 @@
                 </div>
             </div>
 
-            <!-- Step 5: Confirm -->
+            <!-- Step 5: Payment method -->
             <div class="step" data-step="5">
-                <div class="step-label">Step 6 of 6</div>
+                <div class="step-label">Step 6 of 7</div>
+                <h2>How would you like to pay if approved?</h2>
+                <p class="subtitle">Pick your preferred method — we'll send the right link in your DM.</p>
+                <div class="options" data-question="payment_method">
+                    <div class="option" onclick="selectOption(this, 'payment_method', 'crypto')">
+                        <div class="option-dot"></div><span>Crypto (USDT, USDC, SOL, BTC, ETH) — recommended</span>
+                    </div>
+                    <div class="option" onclick="selectOption(this, 'payment_method', 'card')">
+                        <div class="option-dot"></div><span>Card (Visa, Mastercard, Apple Pay) — +15% fee</span>
+                    </div>
+                </div>
+                <div class="btn-row">
+                    <button class="btn btn-back" onclick="prevStep()">Back</button>
+                    <button class="btn btn-primary" onclick="nextStep()" id="btn5" disabled>Continue</button>
+                </div>
+            </div>
+
+            <!-- Step 6: Confirm -->
+            <div class="step" data-step="6">
+                <div class="step-label">Step 7 of 7</div>
                 <h2>Ready to submit?</h2>
                 <p class="subtitle">Review your answers and submit your application.</p>
                 <div id="summary" style="font-size:14px; color:var(--text-secondary); line-height:1.8;"></div>
                 <div class="btn-row">
                     <button class="btn btn-back" onclick="prevStep()">Back</button>
-                    <button class="btn btn-primary" onclick="submitForm()">Submit</button>
+                    <button class="btn btn-primary" onclick="submitForm()" id="btn6">Submit</button>
+                </div>
+            </div>
+
+            <!-- Result: Pending -->
+            <div class="step result" data-step="pending">
+                <div class="result-icon">⏳</div>
+                <h2>Application received</h2>
+                <p>Thanks! Your application is under review. You'll receive a DM from <b>Encore payment#3720</b> as soon as our team approves it (usually within 24 hours).</p>
+            </div>
+
+            <!-- Result: Auto-rejected -->
+            <div class="step result" data-step="auto-reject">
+                <div class="result-icon">&#128683;</div>
+                <h2 id="auto-reject-title">Not Eligible</h2>
+                <p id="auto-reject-reason">Unfortunately, your application can't be processed at this time.</p>
+                <div class="btn-row">
+                    <button class="btn btn-primary" onclick="resetForm()" style="flex:1;">Start Over</button>
                 </div>
             </div>
 
@@ -318,14 +355,20 @@
     <script>
         // ========== CONFIG (easy to change) ==========
         const CONFIG = {
-            cryptoLink: 'https://dash.encoreio.com//purchase?password=wlenc823',
+            cryptoLink: 'https://dash.encoreio.com/purchase?password=wlenc823',
             cardLink: 'https://whop.com/checkout/plan_ta0njpCocuJ6t',
             cryptoPrice: '$4,310',
             cryptoRenewal: '$390/mo',
             cardPrice: '$4,950',
             cardRenewal: '$450/mo',
-            apiUrl: 'https://wapi.encoreio.com/waitlist',
+            apiUrl: 'https://wapi.encoreio.com',  // base — endpoints append paths
+            partnersPath: '/waitlist/partners',
+            submitPath: '/waitlist/submit',
             otherSources: ['Encore Discord', 'Friend'],
+            // Discord OAuth (public client id is safe to expose; secret stays on backend)
+            discordClientId: '1501621819138900029',
+            redirectUri: 'https://waitlist.encoreio.com/',
+            oauthScope: 'identify guilds',
         };
         // Apply config
         document.getElementById('link-crypto').href = CONFIG.cryptoLink;
@@ -348,30 +391,60 @@
             partners.forEach(addOption);
             addOption('other');
         }
-        // Load partners dynamically
-        fetch(CONFIG.apiUrl + '/partners').then(r => r.json()).then(data => {
+        fetch(CONFIG.apiUrl + CONFIG.partnersPath).then(r => r.json()).then(data => {
             buildSourceOptions(data.partners || []);
         }).catch(() => {
             buildSourceOptions([]);
         });
         // ==============================================
 
+        const MAX_STEP = 6;
         let currentStep = 0;
-        const answers = { q1: null, q2: null, q3: null };
+        const answers = { q1: null, q2: null, q3: null, payment_method: null };
         let selectedSource = null;
+        let oauthCode = null;
 
         function startForm() {
             document.getElementById('landing').style.display = 'none';
             document.getElementById('form-wrapper').style.display = 'block';
         }
 
-        // Input validation
-        document.getElementById('discord').addEventListener('input', function() {
-            document.getElementById('btn0').disabled = !this.value.trim();
-        });
-        document.getElementById('discord').addEventListener('keydown', function(e) {
-            if (e.key === 'Enter' && this.value.trim()) nextStep();
-        });
+        // Discord OAuth
+        function loginWithDiscord() {
+            // CSRF state — verified after redirect back
+            const state = Math.random().toString(36).slice(2) + Date.now().toString(36);
+            sessionStorage.setItem('wl_oauth_state', state);
+            const url = 'https://discord.com/api/oauth2/authorize'
+                + '?client_id=' + encodeURIComponent(CONFIG.discordClientId)
+                + '&redirect_uri=' + encodeURIComponent(CONFIG.redirectUri)
+                + '&response_type=code'
+                + '&scope=' + encodeURIComponent(CONFIG.oauthScope)
+                + '&state=' + encodeURIComponent(state)
+                + '&prompt=consent';
+            window.location.href = url;
+        }
+
+        // Detect OAuth callback on page load
+        (function handleCallback() {
+            const params = new URLSearchParams(window.location.search);
+            const code = params.get('code');
+            const state = params.get('state');
+            if (!code) return;
+            const expected = sessionStorage.getItem('wl_oauth_state');
+            // Strict: ignore mismatched state (CSRF)
+            if (expected && state && state !== expected) return;
+            sessionStorage.removeItem('wl_oauth_state');
+            oauthCode = code;
+            // Clean URL so refresh doesn't reuse code
+            history.replaceState({}, '', CONFIG.redirectUri);
+            startForm();
+            document.getElementById('auth-status').textContent = '✅ Discord verified — continue below.';
+            document.getElementById('btn0').textContent = 'Continue';
+            document.getElementById('btn0').onclick = nextStep;
+            document.getElementById('btn0').style.background = '';
+            document.getElementById('btn0').style.color = '';
+        })();
+
         document.getElementById('source_other').addEventListener('input', function() {
             if (selectedSource === 'other') {
                 document.getElementById('btn4').disabled = !this.value.trim();
@@ -384,7 +457,8 @@
             el.classList.add('selected');
             answers[question] = value;
             const stepIdx = el.closest('.step').dataset.step;
-            document.getElementById('btn' + stepIdx).disabled = false;
+            const btn = document.getElementById('btn' + stepIdx);
+            if (btn) btn.disabled = false;
         }
 
         function selectSource(el, value) {
@@ -417,56 +491,93 @@
                 document.querySelectorAll('.progress-bar').forEach((bar, i) => {
                     bar.classList.toggle('active', i <= step);
                 });
-                // Build summary on step 5
-                if (step === 5) {
+                if (step === 6) {
                     document.getElementById('summary').innerHTML =
-                        `<div><b>Discord:</b> ${document.getElementById('discord').value.trim()}</div>` +
-                        (document.getElementById('discord_id').value.trim() ? `<div><b>Discord ID:</b> ${document.getElementById('discord_id').value.trim()}</div>` : '') +
+                        `<div><b>Discord:</b> verified ✅</div>` +
                         `<div><b>Bot experience:</b> ${answers.q1}</div>` +
                         `<div><b>Ticket groups:</b> ${answers.q2}</div>` +
                         `<div><b>Sales volume:</b> ${answers.q3}</div>` +
-                        `<div><b>Source:</b> ${getSourceValue()}</div>`;
+                        `<div><b>Source:</b> ${getSourceValue()}</div>` +
+                        `<div><b>Payment method:</b> ${answers.payment_method}</div>`;
                 }
             }
         }
 
         function nextStep() {
-            if (currentStep < 5) { currentStep++; showStep(currentStep); }
+            if (currentStep < MAX_STEP) { currentStep++; showStep(currentStep); }
         }
         function prevStep() {
             if (currentStep > 0) { currentStep--; showStep(currentStep); }
         }
 
-        function submitForm() {
-            const rejected = answers.q1 === 'no' && answers.q2 === 'no' && answers.q3 === 'none';
-            const result = rejected ? 'rejected' : 'approved';
-            showStep(rejected ? 'reject' : 'payment');
+        const REJECT_REASONS = {
+            account_age: ['Account too young', 'Discord accounts under 90 days are not eligible. Try again later.'],
+            no_overlap: ['No community overlap', "We couldn't find any of our partner communities in your Discord. Engage in the scene and try again later."],
+            duplicate: ['Already submitted', 'You have already applied. Check your DMs or open a ticket in #support.'],
+            captcha: ['Verification failed', 'Please refresh and try again.'],
+            vpn: ['VPN detected', 'Please try again without a VPN/proxy.'],
+            oauth_failed: ['Discord verification failed', 'Try again or open a ticket in #support.'],
+            invalid_input: ['Invalid input', 'Please refresh and try again.'],
+        };
 
-            fetch(CONFIG.apiUrl, {
+        function showAutoReject(reason) {
+            const [title, msg] = REJECT_REASONS[reason] || ['Not eligible', 'Your application can’t be processed.'];
+            document.getElementById('auto-reject-title').textContent = title;
+            document.getElementById('auto-reject-reason').textContent = msg;
+            showStep('auto-reject');
+        }
+
+        function submitForm() {
+            if (!oauthCode) {
+                showAutoReject('oauth_failed');
+                return;
+            }
+            const btn = document.getElementById('btn6');
+            if (btn) { btn.disabled = true; btn.textContent = 'Submitting...'; }
+            fetch(CONFIG.apiUrl + CONFIG.submitPath, {
                 method: 'POST',
                 headers: {'Content-Type': 'application/json'},
                 body: JSON.stringify({
-                    discord: document.getElementById('discord').value.trim(),
-                    discord_id: document.getElementById('discord_id').value.trim(),
+                    code: oauthCode,
                     q1: answers.q1,
                     q2: answers.q2,
                     q3: answers.q3,
                     source: getSourceValue(),
-                    result: result,
+                    payment_method: answers.payment_method,
                 })
-            }).catch(() => {});
+            }).then(r => r.json().then(j => ({status: r.status, body: j}))).then(({status, body}) => {
+                if (status !== 200 || body.ok === false) {
+                    showAutoReject(body && body.error === 'oauth_failed' ? 'oauth_failed' : 'invalid_input');
+                    return;
+                }
+                if (body.status === 'approved') {
+                    showStep('payment');
+                } else if (body.status === 'auto_rejected') {
+                    showAutoReject(body.reason || 'invalid_input');
+                } else {
+                    showStep('pending');
+                }
+                oauthCode = null;  // single-use
+            }).catch(() => {
+                showAutoReject('invalid_input');
+            });
         }
 
         function resetForm() {
             currentStep = 0;
-            answers.q1 = null; answers.q2 = null; answers.q3 = null;
+            answers.q1 = null; answers.q2 = null; answers.q3 = null; answers.payment_method = null;
             selectedSource = null;
-            document.getElementById('discord').value = '';
-            document.getElementById('discord_id').value = '';
+            oauthCode = null;
             document.getElementById('source_other').value = '';
             document.getElementById('source_other').classList.remove('visible');
             document.querySelectorAll('.option').forEach(o => o.classList.remove('selected'));
             document.querySelectorAll('.btn-primary').forEach(b => b.disabled = true);
+            document.getElementById('btn0').disabled = false;
+            document.getElementById('btn0').textContent = 'Login with Discord';
+            document.getElementById('btn0').onclick = loginWithDiscord;
+            document.getElementById('btn0').style.background = '#5865F2';
+            document.getElementById('btn0').style.color = '#fff';
+            document.getElementById('auth-status').textContent = '';
             document.getElementById('form-wrapper').style.display = 'none';
             document.getElementById('landing').style.display = 'block';
             showStep(0);
