@@ -202,6 +202,7 @@
                         <div class="option-dot"></div><span>No</span>
                     </div>
                 </div>
+                <input type="text" class="input-field other-input" id="q1_details" placeholder="Which bots? (required)" autocomplete="off">
                 <div class="btn-row">
                     <button class="btn btn-back" onclick="prevStep()">Back</button>
                     <button class="btn btn-primary" onclick="nextStep()" id="btn1" disabled>Continue</button>
@@ -220,6 +221,7 @@
                         <div class="option-dot"></div><span>No</span>
                     </div>
                 </div>
+                <input type="text" class="input-field other-input" id="q2_details" placeholder="Which groups? (required)" autocomplete="off">
                 <div class="btn-row">
                     <button class="btn btn-back" onclick="prevStep()">Back</button>
                     <button class="btn btn-primary" onclick="nextStep()" id="btn2" disabled>Continue</button>
@@ -400,7 +402,11 @@
 
         const MAX_STEP = 6;
         let currentStep = 0;
-        const answers = { q1: null, q2: null, q3: null, payment_method: null };
+        const answers = {
+            q1: null, q1_details: '',
+            q2: null, q2_details: '',
+            q3: null, payment_method: null,
+        };
         let selectedSource = null;
         let oauthCode = null;
 
@@ -458,8 +464,40 @@
             answers[question] = value;
             const stepIdx = el.closest('.step').dataset.step;
             const btn = document.getElementById('btn' + stepIdx);
+
+            // Show/hide details input for q1/q2 when 'yes' selected
+            if (question === 'q1' || question === 'q2') {
+                const detailsInput = document.getElementById(question + '_details');
+                if (detailsInput) {
+                    if (value === 'yes') {
+                        detailsInput.classList.add('visible');
+                        if (btn) btn.disabled = !detailsInput.value.trim();
+                    } else {
+                        detailsInput.classList.remove('visible');
+                        detailsInput.value = '';
+                        answers[question + '_details'] = '';
+                        if (btn) btn.disabled = false;
+                    }
+                    return;
+                }
+            }
             if (btn) btn.disabled = false;
         }
+
+        // Bind details inputs
+        ['q1_details', 'q2_details'].forEach(id => {
+            const el = document.getElementById(id);
+            if (!el) return;
+            el.addEventListener('input', function() {
+                const question = id.replace('_details', '');
+                answers[id] = this.value.trim();
+                const stepIdx = question === 'q1' ? '1' : '2';
+                const btn = document.getElementById('btn' + stepIdx);
+                if (answers[question] === 'yes' && btn) {
+                    btn.disabled = !this.value.trim();
+                }
+            });
+        });
 
         function selectSource(el, value) {
             sourceContainer.querySelectorAll('.option').forEach(o => o.classList.remove('selected'));
@@ -492,10 +530,14 @@
                     bar.classList.toggle('active', i <= step);
                 });
                 if (step === 6) {
+                    const q1Line = answers.q1 === 'yes' && answers.q1_details
+                        ? `${answers.q1} — ${answers.q1_details}` : answers.q1;
+                    const q2Line = answers.q2 === 'yes' && answers.q2_details
+                        ? `${answers.q2} — ${answers.q2_details}` : answers.q2;
                     document.getElementById('summary').innerHTML =
                         `<div><b>Discord:</b> verified ✅</div>` +
-                        `<div><b>Bot experience:</b> ${answers.q1}</div>` +
-                        `<div><b>Ticket groups:</b> ${answers.q2}</div>` +
+                        `<div><b>Bot experience:</b> ${q1Line}</div>` +
+                        `<div><b>Ticket groups:</b> ${q2Line}</div>` +
                         `<div><b>Sales volume:</b> ${answers.q3}</div>` +
                         `<div><b>Source:</b> ${getSourceValue()}</div>` +
                         `<div><b>Payment method:</b> ${answers.payment_method}</div>`;
@@ -540,7 +582,9 @@
                 body: JSON.stringify({
                     code: oauthCode,
                     q1: answers.q1,
+                    q1_details: answers.q1_details || '',
                     q2: answers.q2,
+                    q2_details: answers.q2_details || '',
                     q3: answers.q3,
                     source: getSourceValue(),
                     payment_method: answers.payment_method,
@@ -565,11 +609,17 @@
 
         function resetForm() {
             currentStep = 0;
-            answers.q1 = null; answers.q2 = null; answers.q3 = null; answers.payment_method = null;
+            answers.q1 = null; answers.q1_details = '';
+            answers.q2 = null; answers.q2_details = '';
+            answers.q3 = null; answers.payment_method = null;
             selectedSource = null;
             oauthCode = null;
             document.getElementById('source_other').value = '';
             document.getElementById('source_other').classList.remove('visible');
+            ['q1_details', 'q2_details'].forEach(id => {
+                const el = document.getElementById(id);
+                if (el) { el.value = ''; el.classList.remove('visible'); }
+            });
             document.querySelectorAll('.option').forEach(o => o.classList.remove('selected'));
             document.querySelectorAll('.btn-primary').forEach(b => b.disabled = true);
             document.getElementById('btn0').disabled = false;
