@@ -275,9 +275,19 @@
                 <h2>Ready to submit?</h2>
                 <p class="subtitle">Review your answers and submit your application.</p>
                 <div id="summary" style="font-size:14px; color:var(--text-secondary); line-height:1.8;"></div>
+                <div style="margin-top:24px; padding:16px; background:rgba(255,165,0,0.08); border:1px solid rgba(255,165,0,0.3); border-radius:8px;">
+                    <label style="display:flex; align-items:flex-start; gap:10px; cursor:pointer; font-size:14px; color:var(--text-primary); line-height:1.5;">
+                        <input type="checkbox" id="dm-confirm" onchange="toggleSubmitBtn()" style="margin-top:3px; width:18px; height:18px; cursor:pointer; flex-shrink:0;">
+                        <span>
+                            I confirm <b>Direct Messages from server members are enabled</b> on my Discord account. Otherwise the approval link will not reach me.
+                            <br>
+                            <a href="https://support.discord.com/hc/en-us/articles/217916488-Blocking-Privacy-Settings" target="_blank" rel="noopener" style="color:var(--accent); font-size:13px;">How to enable DMs →</a>
+                        </span>
+                    </label>
+                </div>
                 <div class="btn-row">
                     <button class="btn btn-back" onclick="prevStep()">Back</button>
-                    <button class="btn btn-primary" onclick="submitForm()" id="btn5">Submit</button>
+                    <button class="btn btn-primary" onclick="submitForm()" id="btn5" disabled>Submit</button>
                 </div>
             </div>
 
@@ -538,9 +548,19 @@
             showStep('auto-reject');
         }
 
+        function toggleSubmitBtn() {
+            const cb = document.getElementById('dm-confirm');
+            const btn = document.getElementById('btn5');
+            if (btn) btn.disabled = !cb.checked;
+        }
+
         function submitForm() {
             if (!oauthCode) {
                 showAutoReject('oauth_failed');
+                return;
+            }
+            const cb = document.getElementById('dm-confirm');
+            if (!cb || !cb.checked) {
                 return;
             }
             const btn = document.getElementById('btn5');
@@ -556,6 +576,7 @@
                     q2_details: answers.q2_details || '',
                     q3: answers.q3,
                     source: getSourceValue(),
+                    dm_confirmed: true,
                 })
             }).then(r => r.json().then(j => ({status: r.status, body: j}))).then(({status, body}) => {
                 if (status !== 200 || body.ok === false) {
