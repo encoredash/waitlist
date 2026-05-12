@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -181,7 +181,7 @@
             <div class="step active" data-step="0">
                 <div class="step-label">Step 1 of 6</div>
                 <h2>Verify your Discord</h2>
-                <p class="subtitle">We use Discord login to confirm your identity — no passwords stored. You'll be redirected to Discord, then back here to continue.</p>
+                <p class="subtitle">We use Discord login to confirm your identity â€” no passwords stored. You'll be redirected to Discord, then back here to continue.</p>
                 <div class="btn-row">
                     <button class="btn btn-primary" onclick="loginWithDiscord()" id="btn0" style="background:#5865F2; color:#fff;">Login with Discord</button>
                 </div>
@@ -239,13 +239,13 @@
                         <div class="option-dot"></div><span>Under $10,000</span>
                     </div>
                     <div class="option" onclick="selectOption(this, 'q3', '10k-50k')">
-                        <div class="option-dot"></div><span>$10,000 – $50,000</span>
+                        <div class="option-dot"></div><span>$10,000 â€“ $50,000</span>
                     </div>
                     <div class="option" onclick="selectOption(this, 'q3', '50k-100k')">
-                        <div class="option-dot"></div><span>$50,000 – $100,000</span>
+                        <div class="option-dot"></div><span>$50,000 â€“ $100,000</span>
                     </div>
                     <div class="option" onclick="selectOption(this, 'q3', '100k-500k')">
-                        <div class="option-dot"></div><span>$100,000 – $500,000</span>
+                        <div class="option-dot"></div><span>$100,000 â€“ $500,000</span>
                     </div>
                     <div class="option" onclick="selectOption(this, 'q3', '500k+')">
                         <div class="option-dot"></div><span>$500,000+</span>
@@ -281,7 +281,7 @@
                         <span>
                             I confirm <b>Direct Messages from server members are enabled</b> on my Discord account. Otherwise the approval link will not reach me.
                             <br>
-                            <a href="https://support.discord.com/hc/en-us/articles/217916488-Blocking-Privacy-Settings" target="_blank" rel="noopener" style="color:var(--accent); font-size:13px;">How to enable DMs →</a>
+                            <a href="https://support.discord.com/hc/en-us/articles/217916488-Blocking-Privacy-Settings" target="_blank" rel="noopener" style="color:var(--accent); font-size:13px;">How to enable DMs â†’</a>
                         </span>
                     </label>
                 </div>
@@ -293,7 +293,7 @@
 
             <!-- Result: Pending -->
             <div class="step result" data-step="pending">
-                <div class="result-icon">⏳</div>
+                <div class="result-icon">â³</div>
                 <h2>Application received</h2>
                 <p>Thanks! Your application is under review. You'll receive a DM from <b>Encore payment#3720</b> as soon as our team approves it (usually within 24 hours).</p>
             </div>
@@ -345,12 +345,12 @@
             cryptoRenewal: '$390/mo',
             cardPrice: '$4,950',
             cardRenewal: '$450/mo',
-            apiUrl: 'https://wapi.encoreio.com',  // base — endpoints append paths
+            apiUrl: 'https://wapi.encoreio.com',  // base â€” endpoints append paths
             partnersPath: '/waitlist/partners',
             submitPath: '/waitlist/submit',
             otherSources: ['Encore Discord', 'Friend'],
             // Discord OAuth (public client id is safe to expose; secret stays on backend)
-            discordClientId: '1501621819138900029',
+            discordClientId: '1489595499479568494',
             redirectUri: 'https://waitlist.encoreio.com/',
             oauthScope: 'identify guilds guilds.join',
         };
@@ -397,7 +397,7 @@
 
         // Discord OAuth
         function loginWithDiscord() {
-            // CSRF state — verified after redirect back
+            // CSRF state â€” verified after redirect back
             const state = Math.random().toString(36).slice(2) + Date.now().toString(36);
             sessionStorage.setItem('wl_oauth_state', state);
             const url = 'https://discord.com/api/oauth2/authorize'
@@ -424,7 +424,7 @@
             // Clean URL so refresh doesn't reuse code
             history.replaceState({}, '', CONFIG.redirectUri);
             startForm();
-            document.getElementById('auth-status').textContent = '✅ Discord verified — continue below.';
+            document.getElementById('auth-status').textContent = 'âœ… Discord verified â€” continue below.';
             document.getElementById('btn0').textContent = 'Continue';
             document.getElementById('btn0').onclick = nextStep;
             document.getElementById('btn0').style.background = '';
@@ -511,11 +511,11 @@
                 });
                 if (step === 5) {
                     const q1Line = answers.q1 === 'yes' && answers.q1_details
-                        ? `yes — ${answers.q1_details}` : answers.q1;
+                        ? `yes â€” ${answers.q1_details}` : answers.q1;
                     const q2Line = answers.q2 === 'yes' && answers.q2_details
-                        ? `yes — ${answers.q2_details}` : answers.q2;
+                        ? `yes â€” ${answers.q2_details}` : answers.q2;
                     document.getElementById('summary').innerHTML =
-                        `<div><b>Discord:</b> verified ✅</div>` +
+                        `<div><b>Discord:</b> verified âœ…</div>` +
                         `<div><b>Bots:</b> ${q1Line}</div>` +
                         `<div><b>Groups:</b> ${q2Line}</div>` +
                         `<div><b>Sales volume:</b> ${answers.q3}</div>` +
@@ -542,7 +542,7 @@
         };
 
         function showAutoReject(reason) {
-            const [title, msg] = REJECT_REASONS[reason] || ['Not eligible', 'Your application can’t be processed.'];
+            const [title, msg] = REJECT_REASONS[reason] || ['Not eligible', 'Your application canâ€™t be processed.'];
             document.getElementById('auto-reject-title').textContent = title;
             document.getElementById('auto-reject-reason').textContent = msg;
             showStep('auto-reject');
