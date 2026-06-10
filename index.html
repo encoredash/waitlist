@@ -406,16 +406,8 @@
             <!-- Result: Payment -->
             <div class="step result" data-step="payment">
                 <div class="result-icon">&#127881;</div>
-                <h2>You're In!</h2>
-                <p>Complete your Encore membership payment with crypto.</p>
-                <div class="payment-options">
-                    <a id="link-crypto" href="#" class="payment-card" target="_blank" style="flex:1;">
-                        <div class="payment-icon">&#x20BF;</div>
-                        <h3>Pay with Crypto</h3>
-                        <span class="price" id="price-crypto"></span>
-                        <span class="desc">USDT, USDC, SOL, BTC, ETH</span>
-                    </a>
-                </div>
+                <h2>You're approved!</h2>
+                <p>Your application has been approved. We've sent your payment link by DM from <b>Encore payment#3720</b> — open Discord to complete your Encore membership.</p>
             </div>
         </div>
         </div>
@@ -439,9 +431,7 @@
             redirectUri: 'https://waitlist.encoreio.com/',
             oauthScope: 'identify guilds guilds.join',
         };
-        // Apply config
-        document.getElementById('link-crypto').href = CONFIG.cryptoLink;
-        document.getElementById('price-crypto').innerHTML = CONFIG.cryptoPrice + ' <small>+ ' + CONFIG.cryptoRenewal + '</small>';
+        // Payment link is delivered by the DM bot after approval — not shown on the page.
 
         // Load partners from API and build source options
         const sourceContainer = document.getElementById('source-options');
