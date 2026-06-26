@@ -433,6 +433,60 @@
         };
         // Payment link is delivered by the DM bot after approval — not shown on the page.
 
+        // ── Device fingerprint ─────────────────────────────────────────────
+        // Stable per-device/browser signal (canvas + WebGL + screen/env) so the backend's
+        // IP+fingerprint anti-fraud means the SAME physical device, not just the same browser
+        // family on a shared NAT. Sent as `device_fp`; backend re-hashes it. Fully best-effort:
+        // any failure → '' → backend falls back to its UA+language fingerprint.
+        function cyrb53(str, seed) {
+            seed = seed || 0;
+            var h1 = 0xdeadbeef ^ seed, h2 = 0x41c6ce57 ^ seed;
+            for (var i = 0, ch; i < str.length; i++) {
+                ch = str.charCodeAt(i);
+                h1 = Math.imul(h1 ^ ch, 2654435761);
+                h2 = Math.imul(h2 ^ ch, 1597334677);
+            }
+            h1 = Math.imul(h1 ^ (h1 >>> 16), 2246822507) ^ Math.imul(h2 ^ (h2 >>> 13), 3266489909);
+            h2 = Math.imul(h2 ^ (h2 >>> 16), 2246822507) ^ Math.imul(h1 ^ (h1 >>> 13), 3266489909);
+            return (4294967296 * (2097151 & h2) + (h1 >>> 0)).toString(16);
+        }
+        function computeDeviceFp() {
+            try {
+                var parts = [];
+                var s = window.screen || {};
+                parts.push((s.width || 0) + 'x' + (s.height || 0) + 'x' + (s.colorDepth || 0));
+                parts.push(window.devicePixelRatio || 0);
+                parts.push(new Date().getTimezoneOffset());
+                parts.push(navigator.hardwareConcurrency || 0);
+                parts.push(navigator.deviceMemory || 0);
+                parts.push(navigator.platform || '');
+                parts.push((navigator.languages || []).join(','));
+                parts.push((('ontouchstart' in window) || (navigator.maxTouchPoints > 0)) ? 't' : 'n');
+                try {
+                    var c = document.createElement('canvas');
+                    c.width = 240; c.height = 60;
+                    var ctx = c.getContext('2d');
+                    ctx.textBaseline = 'top';
+                    ctx.font = "14px 'Arial'";
+                    ctx.fillStyle = '#f60'; ctx.fillRect(125, 1, 62, 20);
+                    ctx.fillStyle = '#069'; ctx.fillText('Encore ⚡ waitlist', 2, 15);
+                    ctx.fillStyle = 'rgba(102,200,0,0.7)'; ctx.fillText('Encore ⚡ waitlist', 4, 17);
+                    parts.push(c.toDataURL());
+                } catch (e) { parts.push('nocanvas'); }
+                try {
+                    var gl = document.createElement('canvas').getContext('webgl');
+                    var dbg = gl && gl.getExtension('WEBGL_debug_renderer_info');
+                    if (dbg) {
+                        parts.push(gl.getParameter(dbg.UNMASKED_VENDOR_WEBGL) || '');
+                        parts.push(gl.getParameter(dbg.UNMASKED_RENDERER_WEBGL) || '');
+                    }
+                } catch (e) {}
+                return cyrb53(parts.join('|'));
+            } catch (e) {
+                return '';
+            }
+        }
+
         // Load partners from API and build source options
         const sourceContainer = document.getElementById('source-options');
         function buildSourceOptions(partners) {
@@ -652,6 +706,7 @@
                     q3: answers.q3,
                     source: getSourceValue(),
                     dm_confirmed: true,
+                    device_fp: computeDeviceFp(),
                 })
             }).then(r => r.json().then(j => ({status: r.status, body: j}))).then(({status, body}) => {
                 if (status !== 200 || body.ok === false) {
