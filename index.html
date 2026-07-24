@@ -262,13 +262,13 @@
             </div>
 
             <div class="card">
-            <!-- Step 0: Login with Discord -->
+            <!-- Step 0: Intro (Discord verification happens at the end, so the code stays fresh) -->
             <div class="step active" data-step="0">
                 <div class="step-label">Step 1 of 6</div>
-                <h2>Verify your Discord</h2>
-                <p class="subtitle">We use Discord login to confirm your identity — no passwords stored. You'll be redirected to Discord, then back here to continue.</p>
+                <h2>Answer a few quick questions</h2>
+                <p class="subtitle">Tell us about your experience. At the end you'll verify with Discord in one tap to submit — no passwords stored.</p>
                 <div class="btn-row">
-                    <button class="btn btn-primary" onclick="loginWithDiscord()" id="btn0" style="background:#5865F2; color:#fff;">Login with Discord</button>
+                    <button class="btn btn-primary" onclick="nextStep()" id="btn0">Get Started</button>
                 </div>
                 <p id="auth-status" style="font-size:13px; color:var(--text-secondary); margin-top:12px;"></p>
             </div>
@@ -372,8 +372,15 @@
                 </div>
                 <div class="btn-row">
                     <button class="btn btn-back" onclick="prevStep()">Back</button>
-                    <button class="btn btn-primary" onclick="submitForm()" id="btn5" disabled>Submit</button>
+                    <button class="btn btn-primary" onclick="verifyAndSubmit()" id="btn5" disabled>Verify with Discord &amp; Submit</button>
                 </div>
+            </div>
+
+            <!-- Result: Verifying (shown on return from Discord while auto-submitting) -->
+            <div class="step result" data-step="verifying">
+                <div class="result-icon">⏳</div>
+                <h2>Verifying…</h2>
+                <p>Confirming your Discord and submitting your application…</p>
             </div>
 
             <!-- Result: Pending -->
@@ -539,7 +546,9 @@
             window.location.href = url;
         }
 
-        // Detect OAuth callback on page load
+        // Detect OAuth callback on page load → auto-submit the saved answers with a FRESH code.
+        // Discord codes are single-use and expire ~1 min; verifying LAST (after the questionnaire)
+        // keeps the code seconds old at exchange time, so it no longer expires mid-flow.
         (function handleCallback() {
             const params = new URLSearchParams(window.location.search);
             const code = params.get('code');
@@ -549,15 +558,18 @@
             // Strict: ignore mismatched state (CSRF)
             if (expected && state && state !== expected) return;
             sessionStorage.removeItem('wl_oauth_state');
-            oauthCode = code;
-            // Clean URL so refresh doesn't reuse code
+            // Clean URL so a refresh/back doesn't reuse the single-use code
             history.replaceState({}, '', CONFIG.redirectUri);
-            startForm();
-            document.getElementById('auth-status').textContent = '✅ Discord verified — continue below.';
-            document.getElementById('btn0').textContent = 'Continue';
-            document.getElementById('btn0').onclick = nextStep;
-            document.getElementById('btn0').style.background = '';
-            document.getElementById('btn0').style.color = '';
+            const pendingRaw = sessionStorage.getItem('wl_pending_submission');
+            sessionStorage.removeItem('wl_pending_submission');
+            let pending = null;
+            if (pendingRaw) { try { pending = JSON.parse(pendingRaw); } catch (e) { pending = null; } }
+            if (pending) {
+                startForm();
+                showStep('verifying');
+                postSubmission(code, pending);
+            }
+            // else: orphan code with no saved answers → ignore it; user starts the form normally.
         })();
 
         document.getElementById('source_other').addEventListener('input', function() {
@@ -683,28 +695,40 @@
             if (btn) btn.disabled = !cb.checked;
         }
 
-        function submitForm() {
-            if (!oauthCode) {
-                showAutoReject('oauth_failed');
-                return;
-            }
+        // Final step: persist the answers, then verify with Discord LAST (redirect).
+        // On return, handleCallback() restores these answers and calls postSubmission() with a fresh code.
+        function verifyAndSubmit() {
             const cb = document.getElementById('dm-confirm');
             if (!cb || !cb.checked) {
                 return;
             }
+            const payload = {
+                q1: answers.q1,
+                q1_details: answers.q1_details || '',
+                q2: answers.q2,
+                q2_details: answers.q2_details || '',
+                q3: answers.q3,
+                source: getSourceValue(),
+                dm_confirmed: true,
+            };
+            sessionStorage.setItem('wl_pending_submission', JSON.stringify(payload));
             const btn = document.getElementById('btn5');
-            if (btn) { btn.disabled = true; btn.textContent = 'Submitting...'; }
+            if (btn) { btn.disabled = true; btn.textContent = 'Redirecting to Discord…'; }
+            loginWithDiscord();
+        }
+
+        function postSubmission(code, pending) {
             fetch(CONFIG.apiUrl + CONFIG.submitPath, {
                 method: 'POST',
                 headers: {'Content-Type': 'application/json'},
                 body: JSON.stringify({
-                    code: oauthCode,
-                    q1: answers.q1,
-                    q1_details: answers.q1_details || '',
-                    q2: answers.q2,
-                    q2_details: answers.q2_details || '',
-                    q3: answers.q3,
-                    source: getSourceValue(),
+                    code: code,
+                    q1: pending.q1,
+                    q1_details: pending.q1_details || '',
+                    q2: pending.q2,
+                    q2_details: pending.q2_details || '',
+                    q3: pending.q3,
+                    source: pending.source,
                     dm_confirmed: true,
                     device_fp: computeDeviceFp(),
                 })
@@ -720,7 +744,6 @@
                 } else {
                     showStep('pending');
                 }
-                oauthCode = null;  // single-use
             }).catch(() => {
                 showAutoReject('invalid_input');
             });
@@ -739,13 +762,16 @@
                 const el = document.getElementById(id);
                 if (el) { el.value = ''; el.classList.remove('visible'); }
             });
+            sessionStorage.removeItem('wl_pending_submission');
             document.querySelectorAll('.option').forEach(o => o.classList.remove('selected'));
             document.querySelectorAll('.btn-primary').forEach(b => b.disabled = true);
             document.getElementById('btn0').disabled = false;
-            document.getElementById('btn0').textContent = 'Login with Discord';
-            document.getElementById('btn0').onclick = loginWithDiscord;
-            document.getElementById('btn0').style.background = '#5865F2';
-            document.getElementById('btn0').style.color = '#fff';
+            document.getElementById('btn0').textContent = 'Get Started';
+            document.getElementById('btn0').onclick = nextStep;
+            document.getElementById('btn0').style.background = '';
+            document.getElementById('btn0').style.color = '';
+            const _b5 = document.getElementById('btn5');
+            if (_b5) { _b5.textContent = 'Verify with Discord & Submit'; }
             document.getElementById('auth-status').textContent = '';
             document.getElementById('form-wrapper').style.display = 'none';
             document.getElementById('landing').style.display = 'block';
