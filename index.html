@@ -3,8 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Waitlist</title>
-    <meta name="description" content="Join the Encore IO waitlist. Secure your ticket to success.">
+    <title>Encore Waitlist</title>
+    <meta name="description" content="Apply for access to Encore — software for buying tickets on official platforms.">
+    <meta property="og:title" content="Encore Waitlist">
+    <meta property="og:description" content="Apply for access to Encore — software for buying tickets on official platforms.">
+    <meta property="og:url" content="https://waitlist.encoreio.com/">
+    <meta property="og:image" content="https://encoresoft.io/og_image.png">
+    <meta name="twitter:card" content="summary_large_image">
     <link rel="icon" type="image/svg+xml" href="assets/img/encore-icon.svg">
     <style>
         /* ===== Encore 2.0 brand fonts (Moderat) ===== */
@@ -239,7 +244,7 @@
             <div class="header">
                 <img class="logo" src="assets/img/encore-wide.svg" alt="Encore">
                 <h1><span>Encore</span> Waitlist</h1>
-                <p>Secure your ticket to success</p>
+                <p>Subscription access for ticket brokers</p>
             </div>
             <button class="btn btn-primary" onclick="startForm()" style="width:100%; height:52px; font-size:16px;">Join Waitlist</button>
         </div>
@@ -276,8 +281,8 @@
             <!-- Step 1: Bot experience -->
             <div class="step" data-step="1">
                 <div class="step-label">Step 2 of 6</div>
-                <h2>Do you have experience using any bots?</h2>
-                <p class="subtitle">e.g. ticket bots, sneaker bots, etc.</p>
+                <h2>Have you used ticket purchasing software before?</h2>
+                <p class="subtitle">e.g. monitors, queue or cart tools</p>
                 <div class="options" data-question="q1">
                     <div class="option" onclick="selectOption(this, 'q1', 'yes')">
                         <div class="option-dot"></div><span>Yes</span>
@@ -286,7 +291,7 @@
                         <div class="option-dot"></div><span>No</span>
                     </div>
                 </div>
-                <input type="text" class="input-field other-input" id="q1_details" placeholder="Which bots? (required)" autocomplete="off">
+                <input type="text" class="input-field other-input" id="q1_details" placeholder="Which tools? (required)" autocomplete="off">
                 <div class="btn-row">
                     <button class="btn btn-back" onclick="prevStep()">Back</button>
                     <button class="btn btn-primary" onclick="nextStep()" id="btn1" disabled>Continue</button>
@@ -370,6 +375,18 @@
                         </span>
                     </label>
                 </div>
+                <div style="margin-top:12px; padding:16px; border:1px solid rgba(255,255,255,0.12); border-radius:8px;">
+                    <label style="display:flex; align-items:flex-start; gap:10px; cursor:pointer; font-size:14px; color:var(--text-primary); line-height:1.5;">
+                        <input type="checkbox" id="privacy-confirm" onchange="toggleSubmitBtn()" style="margin-top:3px; width:18px; height:18px; cursor:pointer; flex-shrink:0;">
+                        <span>I consent to the operator of Encore (details in the <a href="https://encoresoft.io/user_agreement" target="_blank" rel="noopener" style="color:var(--accent);">Public Offer</a>) processing my Discord data, form answers, device fingerprint and IP address to review this application, including automated decisions, add me to the Encore waitlist Discord server, send me the decision and payment reminders, credit the referral partner I name and prevent repeated or automated applications — including transfer to Discord, to that partner, to the dashboard provider and to hosting, cloud storage, messaging and anti-fraud providers, some of them outside Russia (see the <a href="https://encoresoft.io/privacy" target="_blank" rel="noopener" style="color:var(--accent);">Privacy Policy</a>).</span>
+                    </label>
+                </div>
+                <div style="margin-top:12px; padding:16px; border:1px solid rgba(255,255,255,0.12); border-radius:8px;">
+                    <label style="display:flex; align-items:flex-start; gap:10px; cursor:pointer; font-size:14px; color:var(--text-primary); line-height:1.5;">
+                        <input type="checkbox" id="purchase-confirm" onchange="toggleSubmitBtn()" style="margin-top:3px; width:18px; height:18px; cursor:pointer; flex-shrink:0;">
+                        <span>If I purchase a license, I consent to the operator of Encore processing my full name, country of residence, email address, wallet address, payment transactions and invoices to provide the license and to confirm the source of funds, including disclosure to banks, exchange operators and competent authorities (<a href="https://encoresoft.io/user_agreement" target="_blank" rel="noopener" style="color:var(--accent);">Public Offer</a>, clause 5.4).</span>
+                    </label>
+                </div>
                 <div class="btn-row">
                     <button class="btn btn-back" onclick="prevStep()">Back</button>
                     <button class="btn btn-primary" onclick="verifyAndSubmit()" id="btn5" disabled>Verify with Discord &amp; Submit</button>
@@ -395,18 +412,9 @@
                 <div class="result-icon">&#128683;</div>
                 <h2 id="auto-reject-title">Not Eligible</h2>
                 <p id="auto-reject-reason">Unfortunately, your application can't be processed at this time.</p>
+                <p id="auto-reject-note" style="display:none; font-size:13px; color:var(--text-secondary); margin-top:12px;">This decision was made automatically. If you believe it is a mistake, email <a href="mailto:support@encoresoft.io" style="color:var(--accent);">support@encoresoft.io</a> and a person will review your application.</p>
                 <div class="btn-row">
                     <button class="btn btn-primary" onclick="resetForm()" style="flex:1;">Start Over</button>
-                </div>
-            </div>
-
-            <!-- Result: Reject -->
-            <div class="step result" data-step="reject">
-                <div class="result-icon">&#128683;</div>
-                <h2>Not Eligible</h2>
-                <p>Unfortunately, your current experience level isn't sufficient. Gain more experience and try again.</p>
-                <div class="btn-row">
-                    <button class="btn btn-primary" onclick="resetForm()" style="flex:1;">Try Again</button>
                 </div>
             </div>
 
@@ -414,21 +422,22 @@
             <div class="step result" data-step="payment">
                 <div class="result-icon">&#127881;</div>
                 <h2>You're approved!</h2>
-                <p>Your application has been approved. We've sent your payment link by DM from <b>Encore payment#3720</b> — open Discord to complete your Encore membership.</p>
+                <p>Your application has been approved. We've sent you a link to the Encore dashboard (dash.encoreio.com) by DM from <b>Encore payment#3720</b> — open Discord and complete the payment in the dashboard.</p>
             </div>
         </div>
         </div>
+        <footer style="margin-top:28px; text-align:center; font-size:12px; color:var(--text-secondary); line-height:1.8;">
+            © 2026 Encore ·
+            <a href="https://encoresoft.io" style="color:inherit;">encoresoft.io</a> ·
+            <a href="https://encoresoft.io/user_agreement" style="color:inherit;">Public Offer</a> ·
+            <a href="https://encoresoft.io/privacy" style="color:inherit;">Privacy Policy</a> ·
+            <a href="mailto:support@encoresoft.io" style="color:inherit;">support@encoresoft.io</a>
+        </footer>
     </div>
 
     <script>
         // ========== CONFIG (easy to change) ==========
         const CONFIG = {
-            cryptoLink: 'https://dash.encoreio.com/purchase?password=wlenc823',
-            cardLink: 'https://whop.com/checkout/plan_ta0njpCocuJ6t',
-            cryptoPrice: '$4,310',
-            cryptoRenewal: '$390/mo',
-            cardPrice: '$4,950',
-            cardRenewal: '$450/mo',
             apiUrl: 'https://wapi.encoreio.com',  // base — endpoints append paths
             partnersPath: '/waitlist/partners',
             submitPath: '/waitlist/submit',
@@ -656,8 +665,7 @@
                     const q2Line = answers.q2 === 'yes' && answers.q2_details
                         ? `yes — ${answers.q2_details}` : answers.q2;
                     document.getElementById('summary').innerHTML =
-                        `<div><b>Discord:</b> verified ✅</div>` +
-                        `<div><b>Bots:</b> ${q1Line}</div>` +
+                        `<div><b>Tools:</b> ${q1Line}</div>` +
                         `<div><b>Groups:</b> ${q2Line}</div>` +
                         `<div><b>Sales volume:</b> ${answers.q3}</div>` +
                         `<div><b>Source:</b> ${getSourceValue()}</div>`;
@@ -673,32 +681,37 @@
         }
 
         const REJECT_REASONS = {
-            account_age: ['Account too young', 'Discord accounts under 90 days are not eligible. Try again later.'],
-            duplicate: ['Already submitted', 'You have already applied. Check your DMs or open a ticket in #support.'],
+            account_age: ['Account too young', 'Discord accounts under 90 days are not eligible.'],
+            duplicate: ['Already submitted', 'You have already applied. Check your DMs or email support@encoresoft.io.'],
             captcha: ['Verification failed', 'Please refresh and try again.'],
-            vpn: ['VPN detected', 'Please try again without a VPN/proxy.'],
-            oauth_failed: ['Discord verification failed', 'Try again or open a ticket in #support.'],
+            vpn: ['VPN detected', 'Applications sent through a VPN or proxy are not accepted.'],
+            oauth_failed: ['Discord verification failed', 'Try again or email support@encoresoft.io.'],
             invalid_input: ['Invalid input', 'Please refresh and try again.'],
         };
 
-        function showAutoReject(reason) {
-            const [title, msg] = REJECT_REASONS[reason] || ['Not eligible', 'Your application can’t be processed.'];
+        function showAutoReject(reason, automated) {
+            const [title, msg] = REJECT_REASONS[reason] || ['Not eligible', 'Your application can\'t be processed.'];
             document.getElementById('auto-reject-title').textContent = title;
             document.getElementById('auto-reject-reason').textContent = msg;
+            document.getElementById('auto-reject-note').style.display = automated ? 'block' : 'none';
             showStep('auto-reject');
         }
 
         function toggleSubmitBtn() {
             const cb = document.getElementById('dm-confirm');
+            const pc = document.getElementById('privacy-confirm');
+            const pu = document.getElementById('purchase-confirm');
             const btn = document.getElementById('btn5');
-            if (btn) btn.disabled = !cb.checked;
+            if (btn) btn.disabled = !(cb.checked && pc.checked && pu.checked);
         }
 
         // Final step: persist the answers, then verify with Discord LAST (redirect).
         // On return, handleCallback() restores these answers and calls postSubmission() with a fresh code.
         function verifyAndSubmit() {
             const cb = document.getElementById('dm-confirm');
-            if (!cb || !cb.checked) {
+            const pc = document.getElementById('privacy-confirm');
+            const pu = document.getElementById('purchase-confirm');
+            if (!cb || !cb.checked || !pc || !pc.checked || !pu || !pu.checked) {
                 return;
             }
             const payload = {
@@ -709,6 +722,7 @@
                 q3: answers.q3,
                 source: getSourceValue(),
                 dm_confirmed: true,
+                privacy_consent: true,
             };
             sessionStorage.setItem('wl_pending_submission', JSON.stringify(payload));
             const btn = document.getElementById('btn5');
@@ -729,6 +743,7 @@
                     q3: pending.q3,
                     source: pending.source,
                     dm_confirmed: true,
+                    privacy_consent: true,
                     device_fp: computeDeviceFp(),
                 })
             }).then(r => r.json().then(j => ({status: r.status, body: j}))).then(({status, body}) => {
@@ -739,7 +754,9 @@
                 if (body.status === 'approved') {
                     showStep('payment');
                 } else if (body.status === 'auto_rejected') {
-                    showAutoReject(body.reason || 'invalid_input');
+                    showAutoReject(body.reason || 'invalid_input', true);
+                } else if (body.status === 'rejected') {
+                    showAutoReject('rejected', true);
                 } else {
                     showStep('pending');
                 }
