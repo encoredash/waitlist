@@ -12,428 +12,449 @@
     <meta name="twitter:card" content="summary_large_image">
     <link rel="icon" type="image/svg+xml" href="assets/img/encore-icon.svg">
     <style>
-        /* ===== Encore 2.0 brand fonts (Moderat) ===== */
+        /* ===== Encore 2.0 brand fonts (Moderat) — the same set as encoresoft.io ===== */
         @font-face { font-family: 'Moderat'; src: url('assets/font/Moderat-Light.ttf') format('truetype'); font-weight: 300; font-display: swap; }
         @font-face { font-family: 'Moderat'; src: url('assets/font/Moderat-Regular.ttf') format('truetype'); font-weight: 400; font-display: swap; }
         @font-face { font-family: 'Moderat'; src: url('assets/font/Moderat-Medium.ttf') format('truetype'); font-weight: 500; font-display: swap; }
         @font-face { font-family: 'Moderat'; src: url('assets/font/Moderat-Bold.ttf') format('truetype'); font-weight: 700; font-display: swap; }
         @font-face { font-family: 'Moderat'; src: url('assets/font/Moderat-Black.ttf') format('truetype'); font-weight: 900; font-display: swap; }
+        @font-face { font-family: 'Moderat'; src: url('assets/font/Moderat-Black-Italic.ttf') format('truetype'); font-weight: 900; font-style: italic; font-display: swap; }
         @font-face { font-family: 'Moderat Mono'; src: url('assets/font/Moderat-Mono-Regular.ttf') format('truetype'); font-weight: 400; font-display: swap; }
         @font-face { font-family: 'Moderat Mono'; src: url('assets/font/Moderat-Mono-Medium.ttf') format('truetype'); font-weight: 500; font-display: swap; }
 
         *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
         :root {
-            --bg: #06080a;
+            --bg: #000;
+            --bg-soft: #06080a;
             --bg-card: #0c1213;
             --bg-elev: #10171a;
             --bg-input: #080d0e;
-            --text: #ffffff;
-            --text-secondary: #9aa1a6;
+            --fg: #ffffff;
+            --text: #bcc3c7;
+            --faint: #9aa1a6;
             --accent: #16f9c1;
             --accent-hover: #3afad0;
             --accent-ink: #00130d;
             --accent-dim: rgba(22, 249, 193, 0.10);
             --accent-line: rgba(22, 249, 193, 0.38);
-            --warn: #fcbb00;
-            --border: rgba(255, 255, 255, 0.08);
-            --border-strong: rgba(255, 255, 255, 0.16);
+            --line: rgba(255, 255, 255, 0.08);
+            --line-strong: rgba(255, 255, 255, 0.16);
             --mono: 'Moderat Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
             --radius: 12px;
             --radius-lg: 22px;
-            --pill: 999px;
+            --pill: 9999px;
         }
 
         html { scroll-behavior: smooth; overflow-x: hidden; max-width: 100%; }
-
         body {
             font-family: 'Moderat', -apple-system, system-ui, sans-serif;
-            font-weight: 400;
-            background: radial-gradient(130% 90% at 50% 100%, rgba(22, 249, 193, 0.09) 0%, transparent 55%), var(--bg);
-            color: var(--text);
+            background: var(--bg);
+            color: var(--fg);
             min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 1.5rem 1rem;
+            display: flex; flex-direction: column;
             overflow-x: hidden;
-            position: relative;
             -webkit-font-smoothing: antialiased;
             text-rendering: optimizeLegibility;
         }
-        /* animated mint glow — mirrors encoresoft.io hero */
-        body::before {
-            content: '';
-            position: fixed;
-            inset: 0;
-            pointer-events: none;
-            z-index: 0;
+        a { color: inherit; }
+
+        /* ===== Background — as encoresoft.io ===== */
+        .bg { position: fixed; inset: 0; z-index: 0; pointer-events: none; overflow: hidden; background: #000; }
+        .bg__glow {
+            position: absolute; inset: 0;
             background:
-                radial-gradient(72% 55% at 50% 118%, rgba(22, 249, 193, 0.30) 0%, transparent 62%),
-                radial-gradient(95% 65% at 50% 103%, rgba(22, 249, 193, 0.13) 0%, transparent 72%),
-                radial-gradient(45% 45% at 8% 4%, rgba(22, 249, 193, 0.11) 0%, transparent 55%),
-                radial-gradient(48% 48% at 92% 8%, rgba(22, 249, 193, 0.09) 0%, transparent 55%);
-            animation: drift 16s ease-in-out infinite alternate;
+                radial-gradient(85% 65% at 26% 112%, rgba(12, 131, 102, 0.30) 0%, rgba(7, 61, 46, 0.18) 38%, transparent 64%),
+                radial-gradient(60% 50% at 92% 4%, rgba(22, 249, 193, 0.07) 0%, transparent 60%);
+            animation: glow 22s ease-in-out infinite;
         }
-        /* top→bottom vignette for depth */
-        body::after {
-            content: '';
-            position: fixed;
-            inset: 0;
-            pointer-events: none;
-            z-index: 0;
-            background: radial-gradient(130% 90% at 50% -15%, transparent 58%, rgba(0, 0, 0, 0.55) 100%);
-        }
-        @keyframes drift {
-            from { transform: translateY(0); }
-            to   { transform: translateY(-16px); }
-        }
+        .bg__vignette { position: absolute; inset: 0; background: radial-gradient(130% 120% at 50% 54%, transparent 48%, rgba(0, 0, 0, 0.5) 100%); }
+        @keyframes glow { 0%, 100% { opacity: 0.7; } 50% { opacity: 1; } }
 
-        .container {
-            width: 100%;
-            max-width: 480px;
-            position: relative;
-            z-index: 1;
+        /* ===== Header — as encoresoft.io ===== */
+        .hdr {
+            position: fixed; top: 0; left: 0; right: 0; z-index: 50; height: 64px;
+            background: rgba(10, 16, 14, 0.72);
+            -webkit-backdrop-filter: blur(20px) saturate(160%); backdrop-filter: blur(20px) saturate(160%);
+            border-bottom: 1px solid rgba(22, 249, 193, 0.22);
+            box-shadow: inset 0 1px rgba(255, 255, 255, 0.06), 0 12px 32px -12px rgba(0, 0, 0, 0.85);
         }
+        .hdr__nav { max-width: 1152px; height: 64px; margin: 0 auto; padding: 0 32px; display: flex; align-items: center; justify-content: space-between; gap: 16px; }
+        .hdr__logo { display: flex; flex-shrink: 0; }
+        .hdr__logo img { height: 22px; width: auto; display: block; }
+        .hdr__links { display: flex; align-items: center; gap: 20px; }
+        .hdr__links a, .hdr__cta a { color: var(--text); text-decoration: none; font-size: 13px; white-space: nowrap; transition: color 0.3s; }
+        .hdr__links a:hover, .hdr__cta a:hover { color: var(--accent); }
+        .hdr__cta { display: flex; align-items: center; gap: 12px; }
+        .hdr__cta a { font-size: 14px; }
 
-        /* ===== Header ===== */
-        .header { text-align: center; margin-bottom: 1.85rem; }
-        .header .logo { height: 30px; width: auto; margin: 0 auto 1.15rem; display: block; filter: drop-shadow(0 0 22px rgba(22, 249, 193, 0.28)); }
-        .header h1 {
-            font-family: 'Moderat', sans-serif;
-            font-weight: 700;
-            font-size: 30px;
-            letter-spacing: -0.6px;
-            line-height: 1.12;
-            margin-bottom: 0.55rem;
+        /* ===== Page ===== */
+        .page { position: relative; z-index: 1; flex: 1; width: 100%; max-width: 1152px; margin: 0 auto; padding: 124px 32px 72px; }
+        .hero {
+            display: grid; gap: 28px 56px; align-items: start;
+            grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr);
+            grid-template-rows: auto 1fr;
+            grid-template-areas: "intro form" "details form";
         }
-        .header h1 .accent, .header h1 span { color: var(--accent); }
-        .header p { color: var(--text-secondary); font-size: 15px; line-height: 1.5; }
+        .hero__intro { grid-area: intro; }
+        .hero__details { grid-area: details; }
+        .hero__form { grid-area: form; position: sticky; top: 96px; }
 
-        /* ===== Progress ===== */
-        .progress { display: flex; gap: 6px; margin-bottom: 1.75rem; }
-        .progress-bar { flex: 1; height: 3px; background: var(--border); border-radius: 2px; transition: background 0.35s, box-shadow 0.35s; }
-        .progress-bar.active { background: var(--accent); box-shadow: 0 0 10px -1px rgba(22, 249, 193, 0.6); }
+        .label { font-family: var(--mono); text-transform: uppercase; letter-spacing: 0.22em; color: var(--accent); font-size: 12px; line-height: 1.5; }
+        .h1 { font-weight: 900; letter-spacing: -0.032em; font-size: clamp(34px, 4vw, 52px); line-height: 1.02; margin-top: 24px; }
+        .h1 span { display: block; }
+        .h1 .accent { color: var(--accent); font-style: italic; }
+        .lead { color: var(--text); font-size: 17px; line-height: 1.625; margin-top: 22px; max-width: 560px; }
+
+        .steps { list-style: none; counter-reset: s; margin-top: 8px; display: grid; gap: 14px; max-width: 560px; }
+        .steps li { counter-increment: s; display: grid; grid-template-columns: 36px 1fr; gap: 14px; align-items: start; color: var(--text); font-size: 15px; line-height: 1.55; }
+        .steps li::before {
+            content: "0" counter(s); font-family: var(--mono); font-size: 12px; color: var(--accent);
+            border: 1px solid var(--accent-line); border-radius: var(--pill); height: 28px; display: flex; align-items: center; justify-content: center;
+        }
+        .steps b { color: var(--fg); font-weight: 700; }
+
+        .facts { margin-top: 28px; border-top: 1px solid var(--line); max-width: 560px; }
+        .facts > div { display: grid; grid-template-columns: 150px 1fr; gap: 16px; padding: 14px 0; border-bottom: 1px solid var(--line); font-size: 14px; line-height: 1.5; color: var(--text); }
+        .facts__k { font-family: var(--mono); font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--faint); padding-top: 2px; }
+        .facts a { color: var(--accent); text-decoration: none; }
+        .facts a:hover { text-decoration: underline; }
 
         /* ===== Card ===== */
         .card {
-            background: linear-gradient(180deg, rgba(255,255,255,0.025), rgba(255,255,255,0)) , var(--bg-card);
-            border: 1px solid var(--border);
+            background: linear-gradient(180deg, rgba(255, 255, 255, 0.03), rgba(255, 255, 255, 0)), rgba(12, 18, 19, 0.92);
+            border: 1px solid var(--line);
             border-radius: var(--radius-lg);
             padding: 2rem;
             box-shadow: 0 24px 60px -30px rgba(0, 0, 0, 0.9), inset 0 1px 0 rgba(255, 255, 255, 0.04);
         }
+        .card__title { font-weight: 700; font-size: 22px; letter-spacing: -0.3px; line-height: 1.25; margin: 0.85rem 0 0.6rem; }
+        .card__text { color: var(--text); font-size: 14px; line-height: 1.6; }
+        .card__note { color: var(--faint); font-size: 12.5px; line-height: 1.6; margin-top: 14px; }
+
+        /* ===== Progress ===== */
+        .progress { display: flex; gap: 6px; margin-bottom: 1.6rem; }
+        .progress-bar { flex: 1; height: 3px; background: var(--line); border-radius: 2px; transition: background 0.35s, box-shadow 0.35s; }
+        .progress-bar.active { background: var(--accent); box-shadow: 0 0 10px -1px rgba(22, 249, 193, 0.6); }
 
         .step { display: none; animation: fadeIn 0.32s ease; }
         .step.active { display: block; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
 
-        .step-label {
-            font-family: var(--mono);
-            font-size: 11px;
-            font-weight: 500;
-            color: var(--accent);
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            margin-bottom: 0.85rem;
-        }
-        .step h2 { font-family: 'Moderat', sans-serif; font-weight: 700; font-size: 20px; letter-spacing: -0.3px; margin-bottom: 1.5rem; line-height: 1.3; }
-        .step .subtitle { color: var(--text-secondary); font-size: 14px; margin-top: -1rem; margin-bottom: 1.25rem; line-height: 1.55; }
+        .step-label { font-family: var(--mono); font-size: 11px; font-weight: 500; color: var(--accent); text-transform: uppercase; letter-spacing: 0.2em; margin-bottom: 0.85rem; }
+        .step h2 { font-weight: 700; font-size: 20px; letter-spacing: -0.3px; margin-bottom: 1.5rem; line-height: 1.3; }
+        .step .subtitle { color: var(--text); font-size: 14px; margin-top: -1rem; margin-bottom: 1.25rem; line-height: 1.55; }
 
         /* ===== Inputs ===== */
         .input-field {
             width: 100%; height: 48px;
-            background: var(--bg-input);
-            border: 1px solid var(--border);
-            border-radius: var(--radius);
-            color: var(--text);
-            font-family: 'Moderat', sans-serif; font-size: 15px;
-            padding: 0 1rem; outline: none;
-            transition: border-color 0.2s, box-shadow 0.2s;
+            background: var(--bg-input); border: 1px solid var(--line); border-radius: var(--radius);
+            color: var(--fg); font-family: 'Moderat', sans-serif; font-size: 15px;
+            padding: 0 1rem; outline: none; transition: border-color 0.2s, box-shadow 0.2s;
         }
         .input-field:focus { border-color: var(--accent-line); box-shadow: 0 0 0 3px var(--accent-dim); }
         .input-field::placeholder { color: #5b6469; }
-        .input-field + .input-field { margin-top: 10px; }
 
-        /* ===== Options ===== */
         .options { display: flex; flex-direction: column; gap: 10px; }
         .option {
-            display: flex; align-items: center; gap: 12px;
-            padding: 14px 16px;
-            background: var(--bg-input);
-            border: 1px solid var(--border);
-            border-radius: var(--radius);
+            display: flex; align-items: center; gap: 12px; padding: 14px 16px;
+            background: var(--bg-input); border: 1px solid var(--line); border-radius: var(--radius);
             cursor: pointer; transition: all 0.18s; font-size: 15px;
         }
-        .option:hover { border-color: var(--border-strong); background: var(--bg-elev); }
+        .option:hover { border-color: var(--line-strong); background: var(--bg-elev); }
         .option.selected { border-color: var(--accent-line); background: var(--accent-dim); }
         .option-dot { width: 18px; height: 18px; border-radius: 50%; border: 2px solid #4a5358; flex-shrink: 0; transition: all 0.18s; display: flex; align-items: center; justify-content: center; }
         .option.selected .option-dot { border-color: var(--accent); box-shadow: 0 0 10px -2px var(--accent); }
         .option.selected .option-dot::after { content: ''; width: 8px; height: 8px; border-radius: 50%; background: var(--accent); }
-
-        /* ===== Buttons ===== */
-        .btn-row { display: flex; gap: 10px; margin-top: 1.75rem; }
-        .btn {
-            height: 48px; border: none;
-            border-radius: var(--pill);
-            font-family: 'Moderat', sans-serif; font-weight: 700; font-size: 14px;
-            cursor: pointer; padding: 0 2rem;
-            transition: transform 0.2s, box-shadow 0.2s, background 0.2s, color 0.2s, border-color 0.2s;
-            letter-spacing: 0.2px;
-        }
-        .btn-primary {
-            flex: 1; position: relative; overflow: hidden;
-            background: var(--accent); color: var(--accent-ink);
-        }
-        .btn-primary:hover { background: var(--accent-hover); transform: translateY(-2px); box-shadow: 0 0 30px -8px rgba(22, 249, 193, 0.7); }
-        .btn-primary:disabled { opacity: 0.28; cursor: not-allowed; transform: none; box-shadow: none; }
-        .btn-primary::after {
-            content: ''; position: absolute; top: 0; left: -160%;
-            width: 55%; height: 100%; transform: skewX(-20deg);
-            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.45), transparent);
-            pointer-events: none;
-        }
-        .btn-primary:hover:not(:disabled)::after { animation: shimmer 0.9s ease; }
-        @keyframes shimmer { to { left: 170%; } }
-        .btn-back { background: rgba(255, 255, 255, 0.03); border: 1px solid var(--border-strong); color: var(--text-secondary); }
-        .btn-back:hover { border-color: var(--accent-line); color: var(--accent); transform: translateY(-2px); }
-
-        /* ===== Payment card ===== */
-        .payment-options { display: flex; gap: 12px; }
-        .payment-card {
-            flex: 1; background: var(--bg-input); border: 1px solid var(--border);
-            border-radius: var(--radius-lg); padding: 1.5rem; text-align: center;
-            cursor: pointer; transition: all 0.2s; text-decoration: none; color: var(--text);
-            display: flex; flex-direction: column; align-items: center; gap: 10px;
-        }
-        .payment-card:hover { border-color: var(--accent-line); background: var(--accent-dim); transform: translateY(-2px); box-shadow: 0 0 30px -12px rgba(22, 249, 193, 0.5); }
-        .payment-icon { font-size: 28px; margin-bottom: 4px; }
-        .payment-card h3 { font-weight: 700; font-size: 16px; }
-        .payment-card .tag { font-family: var(--mono); font-size: 10px; padding: 3px 10px; border-radius: var(--pill); font-weight: 500; letter-spacing: 1px; text-transform: uppercase; }
-        .tag-recommended { background: var(--accent); color: var(--accent-ink); }
-        .tag-fee { background: rgba(252, 187, 0, 0.15); color: var(--warn); }
-        .payment-card .price { font-size: 18px; font-weight: 700; color: var(--text); }
-        .payment-card .price small { font-size: 12px; font-weight: 400; color: var(--text-secondary); }
-        .payment-card .desc { font-size: 13px; color: var(--text-secondary); }
-
-        /* ===== Result ===== */
-        .result-icon { font-size: 48px; margin-bottom: 1rem; }
-        .result h2 { margin-bottom: 0.75rem; }
-        .result p { color: var(--text-secondary); font-size: 15px; line-height: 1.6; margin-bottom: 1.5rem; }
-
         .other-input { margin-top: 10px; display: none; }
         .other-input.visible { display: block; }
-
         .options-scroll { max-height: 320px; overflow-y: auto; padding-right: 4px; }
         .options-scroll::-webkit-scrollbar { width: 4px; }
         .options-scroll::-webkit-scrollbar-thumb { background: var(--accent-line); border-radius: 2px; }
-        .options-scroll::-webkit-scrollbar-track { background: transparent; }
 
+        /* ===== Consents ===== */
+        .summary { font-size: 14px; color: var(--text); line-height: 1.8; padding: 12px 16px; border: 1px solid var(--line); border-radius: var(--radius); background: var(--bg-input); }
+        .summary b { color: var(--fg); font-weight: 500; }
+        .consents { display: grid; gap: 10px; margin-top: 16px; }
+        .consent { display: flex; align-items: flex-start; gap: 12px; padding: 13px 14px; border: 1px solid var(--line); border-radius: var(--radius); cursor: pointer; font-size: 13.5px; line-height: 1.5; color: var(--text); transition: border-color 0.18s, background 0.18s; }
+        .consent:hover { border-color: var(--line-strong); }
+        .consent b { color: var(--fg); font-weight: 500; }
+        .consent a { color: var(--accent); text-decoration: none; }
+        .consent a:hover { text-decoration: underline; }
+        .consent input { appearance: none; -webkit-appearance: none; width: 18px; height: 18px; margin-top: 1px; flex-shrink: 0; border: 2px solid #4a5358; border-radius: 5px; cursor: pointer; display: grid; place-content: center; transition: all 0.18s; }
+        .consent input::after { content: ''; width: 9px; height: 5px; border-left: 2px solid var(--accent-ink); border-bottom: 2px solid var(--accent-ink); transform: rotate(-45deg) translate(1px, -1px); opacity: 0; }
+        .consent input:checked { background: var(--accent); border-color: var(--accent); }
+        .consent input:checked::after { opacity: 1; }
+        .consent:has(input:checked) { border-color: var(--accent-line); background: var(--accent-dim); }
+        .data-note { font-size: 12.5px; color: var(--faint); line-height: 1.6; margin-top: 14px; }
+
+        /* ===== Buttons — as encoresoft.io ===== */
+        .btn-row { display: flex; gap: 10px; margin-top: 1.6rem; }
+        .btn {
+            height: 48px; border: 1px solid transparent; border-radius: var(--pill);
+            font-family: 'Moderat', sans-serif; font-weight: 600; font-size: 14px; letter-spacing: 0.025em;
+            cursor: pointer; padding: 0 1.75rem; display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+            transition: transform 0.3s, box-shadow 0.3s, background 0.3s, color 0.3s, border-color 0.3s;
+        }
+        .btn-primary { flex: 1; background: var(--accent); color: var(--accent-ink); }
+        .btn-primary:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 0 24px -4px rgba(22, 249, 193, 0.6); }
+        .btn-primary:disabled { opacity: 0.28; cursor: not-allowed; }
+        .btn-back { background: rgba(255, 255, 255, 0.03); border-color: var(--line-strong); color: var(--fg); }
+        .btn-back:hover { color: var(--accent); border-color: rgba(22, 249, 193, 0.6); transform: translateY(-2px); }
+        .btn__arrow { transition: transform 0.3s; }
+        .btn:hover .btn__arrow { transform: translateX(4px); }
+        .btn-wide { width: 100%; height: 52px; font-size: 15px; margin-top: 1.4rem; }
+
+        /* ===== Results ===== */
+        .result-icon { font-size: 44px; margin-bottom: 1rem; }
+        .result h2 { margin-bottom: 0.75rem; }
+        .result p { color: var(--text); font-size: 15px; line-height: 1.6; margin-bottom: 1.25rem; }
+        .result a { color: var(--accent); }
+
+        /* ===== Footer — as encoresoft.io ===== */
+        .ftr { position: relative; z-index: 1; border-top: 1px solid var(--line); background: var(--bg-soft); }
+        .ftr__in { max-width: 1152px; margin: 0 auto; padding: 24px 32px; display: flex; justify-content: space-between; align-items: flex-start; gap: 24px; font-size: 12px; color: var(--faint); line-height: 1.625; }
+        .ftr__disclaimer { max-width: 576px; }
+        .ftr__links { display: flex; gap: 16px; flex-wrap: wrap; white-space: nowrap; }
+        .ftr__links a { text-decoration: none; transition: color 0.3s; }
+        .ftr__links a:hover { color: var(--accent); }
+
+        @media (max-width: 960px) {
+            .hdr__links { display: none; }
+            .page { padding: 100px 20px 56px; }
+            .hero { grid-template-columns: 1fr; grid-template-rows: none; grid-template-areas: "intro" "form" "details"; gap: 28px; }
+            .hero__form { position: static; }
+            .ftr__in { flex-direction: column; padding: 24px 20px; }
+        }
         @media (max-width: 480px) {
+            .hdr__nav { padding: 0 20px; }
             .card { padding: 1.5rem; }
-            .payment-options { flex-direction: column; }
-            .header h1 { font-size: 25px; }
-            .header .logo { height: 26px; }
+            .lead { font-size: 16px; }
+            .facts > div { grid-template-columns: 1fr; gap: 4px; }
+            .btn { padding: 0 1.1rem; }
+            .btn-primary { line-height: 1.2; }
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <!-- Landing screen -->
-        <div id="landing">
-            <div class="header">
-                <img class="logo" src="assets/img/encore-wide.svg" alt="Encore">
-                <h1><span>Encore</span> Waitlist</h1>
-                <p>Subscription access for ticket brokers</p>
+    <div class="bg" aria-hidden="true"><div class="bg__glow"></div><div class="bg__vignette"></div></div>
+
+    <header class="hdr">
+        <nav class="hdr__nav">
+            <a class="hdr__logo" href="https://encoresoft.io/" aria-label="Encore home"><img src="assets/img/encore-wide.svg" alt="Encore"></a>
+            <div class="hdr__links">
+                <a href="https://encoresoft.io/#about">About</a>
+                <a href="https://encoresoft.io/#value">Value</a>
+                <a href="https://encoresoft.io/#software">Software</a>
+                <a href="https://encoresoft.io/#audience">Audience</a>
+                <a href="https://encoresoft.io/#pricing">Pricing</a>
+                <a href="https://encoresoft.io/#contacts">Contacts</a>
             </div>
-            <button class="btn btn-primary" onclick="startForm()" style="width:100%; height:52px; font-size:16px;">Join Waitlist</button>
+            <div class="hdr__cta">
+                <a href="https://dash.encoresoft.io/membership" target="_blank" rel="noopener noreferrer">Dashboard</a>
+            </div>
+        </nav>
+    </header>
+
+    <main class="page">
+        <section class="hero">
+            <div class="hero__intro">
+                <span class="label">[ Apply for access ]</span>
+                <h1 class="h1"><span>Join the Encore</span><span class="accent">waitlist</span></h1>
+                <p class="lead">Encore is software for buying tickets on official platforms. It joins the ticket sale at the scheduled time, takes a place in the online queue under your own account and adds matching tickets to the cart. The purchase and payment are completed by you.</p>
+            </div>
+
+            <div class="hero__details">
+                <ol class="steps">
+                    <li><span><b>Apply.</b> Answer four short questions and verify your Discord account.</span></li>
+                    <li><span><b>Review.</b> Our team reviews the application, usually within 24 hours.</span></li>
+                    <li><span><b>Pay.</b> Once approved, you get a link to the dashboard by Discord DM and pay there in USDT or USDC. An invoice is issued for every payment.</span></li>
+                    <li><span><b>Start.</b> Your license key is in the dashboard, ready to use.</span></li>
+                </ol>
+                <div class="facts">
+                    <div><span class="facts__k">Who can apply</span><span>Ticket brokers who are not residents of the Russian Federation</span></div>
+                    <div><span class="facts__k">Pricing</span><a href="https://encoresoft.io/#pricing">Plans and prices on encoresoft.io</a></div>
+                    <div><span class="facts__k">Support</span><a href="mailto:support@encoresoft.io">support@encoresoft.io</a></div>
+                </div>
+            </div>
+
+            <div class="hero__form">
+                <div class="card">
+                    <!-- Landing -->
+                    <div id="landing">
+                        <div class="step-label">Application</div>
+                        <h2 class="card__title">Start your application</h2>
+                        <p class="card__text">Takes about two minutes. At the end you verify with Discord in one tap — we never see your password.</p>
+                        <button class="btn btn-primary btn-wide" onclick="startForm()">
+                            <span>Start application</span>
+                            <svg class="btn__arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"></path><path d="m12 5 7 7-7 7"></path></svg>
+                        </button>
+                        <p class="card__note">Encore is invite-only: every application is reviewed before access is offered.</p>
+                    </div>
+
+                    <!-- Form -->
+                    <div id="form-wrapper" style="display:none;">
+                        <div class="progress" id="progress">
+                            <div class="progress-bar active"></div>
+                            <div class="progress-bar"></div>
+                            <div class="progress-bar"></div>
+                            <div class="progress-bar"></div>
+                            <div class="progress-bar"></div>
+                            <div class="progress-bar"></div>
+                        </div>
+
+                        <!-- Step 0: Intro (Discord verification happens at the end, so the code stays fresh) -->
+                        <div class="step active" data-step="0">
+                            <div class="step-label">Step 1 of 6</div>
+                            <h2>Answer a few quick questions</h2>
+                            <p class="subtitle">Tell us about your experience. At the end you'll verify with Discord in one tap to submit — no passwords stored.</p>
+                            <div class="btn-row">
+                                <button class="btn btn-primary" onclick="nextStep()" id="btn0">Get Started</button>
+                            </div>
+                            <p id="auth-status" style="font-size:13px; color:var(--faint); margin-top:12px;"></p>
+                        </div>
+
+                        <!-- Step 1: Bot experience -->
+                        <div class="step" data-step="1">
+                            <div class="step-label">Step 2 of 6</div>
+                            <h2>Have you used ticket purchasing software before?</h2>
+                            <p class="subtitle">e.g. monitors, queue or cart tools</p>
+                            <div class="options" data-question="q1">
+                                <div class="option" onclick="selectOption(this, 'q1', 'yes')"><div class="option-dot"></div><span>Yes</span></div>
+                                <div class="option" onclick="selectOption(this, 'q1', 'no')"><div class="option-dot"></div><span>No</span></div>
+                            </div>
+                            <input type="text" class="input-field other-input" id="q1_details" placeholder="Which tools? (required)" autocomplete="off">
+                            <div class="btn-row">
+                                <button class="btn btn-back" onclick="prevStep()">Back</button>
+                                <button class="btn btn-primary" onclick="nextStep()" id="btn1" disabled>Continue</button>
+                            </div>
+                        </div>
+
+                        <!-- Step 2: Ticket groups -->
+                        <div class="step" data-step="2">
+                            <div class="step-label">Step 3 of 6</div>
+                            <h2>Are you currently a member of any ticket groups?</h2>
+                            <div class="options" data-question="q2">
+                                <div class="option" onclick="selectOption(this, 'q2', 'yes')"><div class="option-dot"></div><span>Yes</span></div>
+                                <div class="option" onclick="selectOption(this, 'q2', 'no')"><div class="option-dot"></div><span>No</span></div>
+                            </div>
+                            <input type="text" class="input-field other-input" id="q2_details" placeholder="Which groups? (required)" autocomplete="off">
+                            <div class="btn-row">
+                                <button class="btn btn-back" onclick="prevStep()">Back</button>
+                                <button class="btn btn-primary" onclick="nextStep()" id="btn2" disabled>Continue</button>
+                            </div>
+                        </div>
+
+                        <!-- Step 3: Sales volume -->
+                        <div class="step" data-step="3">
+                            <div class="step-label">Step 4 of 6</div>
+                            <h2>What is your annual ticket sales volume?</h2>
+                            <div class="options" data-question="q3">
+                                <div class="option" onclick="selectOption(this, 'q3', 'none')"><div class="option-dot"></div><span>None</span></div>
+                                <div class="option" onclick="selectOption(this, 'q3', 'under10k')"><div class="option-dot"></div><span>Under $10,000</span></div>
+                                <div class="option" onclick="selectOption(this, 'q3', '10k-50k')"><div class="option-dot"></div><span>$10,000 – $50,000</span></div>
+                                <div class="option" onclick="selectOption(this, 'q3', '50k-100k')"><div class="option-dot"></div><span>$50,000 – $100,000</span></div>
+                                <div class="option" onclick="selectOption(this, 'q3', '100k-500k')"><div class="option-dot"></div><span>$100,000 – $500,000</span></div>
+                                <div class="option" onclick="selectOption(this, 'q3', '500k+')"><div class="option-dot"></div><span>$500,000+</span></div>
+                            </div>
+                            <div class="btn-row">
+                                <button class="btn btn-back" onclick="prevStep()">Back</button>
+                                <button class="btn btn-primary" onclick="nextStep()" id="btn3" disabled>Continue</button>
+                            </div>
+                        </div>
+
+                        <!-- Step 4: How found us (partners + other) -->
+                        <div class="step" data-step="4">
+                            <div class="step-label">Step 5 of 6</div>
+                            <h2>How did you find out about us?</h2>
+                            <div class="options options-scroll" id="source-options"></div>
+                            <input type="text" class="input-field other-input" id="source_other" placeholder="Please specify..." autocomplete="off">
+                            <div class="btn-row">
+                                <button class="btn btn-back" onclick="prevStep()">Back</button>
+                                <button class="btn btn-primary" onclick="nextStep()" id="btn4" disabled>Continue</button>
+                            </div>
+                        </div>
+
+                        <!-- Step 5: Confirm -->
+                        <div class="step" data-step="5">
+                            <div class="step-label">Step 6 of 6</div>
+                            <h2>Ready to submit?</h2>
+                            <p class="subtitle">Review your answers and confirm.</p>
+                            <div id="summary" class="summary"></div>
+                            <div class="consents">
+                                <label class="consent">
+                                    <input type="checkbox" id="dm-confirm" onchange="toggleSubmitBtn()">
+                                    <span>I confirm <b>Direct Messages from server members are enabled</b> on my Discord account — the approval link is sent by DM. <a href="https://support.discord.com/hc/en-us/articles/217916488-Blocking-Privacy-Settings" target="_blank" rel="noopener">How to enable DMs</a></span>
+                                </label>
+                                <label class="consent">
+                                    <input type="checkbox" id="resident-confirm" onchange="toggleSubmitBtn()">
+                                    <span>I am <b>not a resident of the Russian Federation</b>.</span>
+                                </label>
+                                <label class="consent">
+                                    <input type="checkbox" id="privacy-confirm" onchange="toggleSubmitBtn()">
+                                    <span>I agree to the processing of my data to review this application, including automated checks and transfer outside Russia. <a href="https://encoresoft.io/privacy" target="_blank" rel="noopener">Details</a></span>
+                                </label>
+                                <label class="consent">
+                                    <input type="checkbox" id="purchase-confirm" onchange="toggleSubmitBtn()">
+                                    <span>If I buy a license, I agree that my data may be shared with banks and exchanges to confirm my payments. <a href="https://encoresoft.io/privacy" target="_blank" rel="noopener">Details</a></span>
+                                </label>
+                            </div>
+                            <p class="data-note">To prevent fraud we check your Discord account (ID, username, account age, shared partner servers), your connection (region, VPN) and your device.</p>
+                            <div class="btn-row">
+                                <button class="btn btn-back" onclick="prevStep()">Back</button>
+                                <button class="btn btn-primary" onclick="verifyAndSubmit()" id="btn5" disabled>Verify with Discord &amp; Submit</button>
+                            </div>
+                        </div>
+
+                        <!-- Result: Verifying (shown on return from Discord while auto-submitting) -->
+                        <div class="step result" data-step="verifying">
+                            <div class="result-icon">⏳</div>
+                            <h2>Verifying…</h2>
+                            <p>Confirming your Discord and submitting your application…</p>
+                        </div>
+
+                        <!-- Result: Pending -->
+                        <div class="step result" data-step="pending">
+                            <div class="result-icon">⏳</div>
+                            <h2>Application received</h2>
+                            <p>Thanks! Your application is under review. You'll receive a DM from <b>Encore payment#3720</b> as soon as our team approves it (usually within 24 hours).</p>
+                        </div>
+
+                        <!-- Result: Auto-rejected -->
+                        <div class="step result" data-step="auto-reject">
+                            <div class="result-icon">&#128683;</div>
+                            <h2 id="auto-reject-title">Not Eligible</h2>
+                            <p id="auto-reject-reason">Unfortunately, your application can't be processed at this time.</p>
+                            <p id="auto-reject-note" style="display:none; font-size:13px; color:var(--faint); margin-top:12px;">This decision was made automatically. If you believe it is a mistake, email <a href="mailto:support@encoresoft.io">support@encoresoft.io</a> and a person will review your application.</p>
+                            <div class="btn-row">
+                                <button class="btn btn-primary" onclick="resetForm()" style="flex:1;">Start Over</button>
+                            </div>
+                        </div>
+
+                        <!-- Result: Payment -->
+                        <div class="step result" data-step="payment">
+                            <div class="result-icon">&#127881;</div>
+                            <h2>You're approved!</h2>
+                            <p>Your application has been approved. We've sent you a link to the Encore dashboard (dash.encoresoft.io) by DM from <b>Encore payment#3720</b> — open Discord and complete the payment in the dashboard.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="ftr">
+        <div class="ftr__in">
+            <div class="ftr__disclaimer">
+                © 2026 Encore. All rights reserved.<br>
+                Encore is independent software, not affiliated with any ticketing platform, venue, artist or event organizer. It does not buy, sell or resell tickets or make payments — purchases are completed by the user with their own accounts and payment details.
+            </div>
+            <div class="ftr__links">
+                <a href="https://encoresoft.io/">encoresoft.io</a>
+                <a href="mailto:support@encoresoft.io">support@encoresoft.io</a>
+            </div>
         </div>
-
-        <!-- Form -->
-        <div id="form-wrapper" style="display:none;">
-            <div class="header">
-                <img class="logo" src="assets/img/encore-wide.svg" alt="Encore">
-                <h1><span>Encore</span> Waitlist</h1>
-                <p>Answer a few questions to get started</p>
-            </div>
-
-            <div class="progress" id="progress">
-                <div class="progress-bar active"></div>
-                <div class="progress-bar"></div>
-                <div class="progress-bar"></div>
-                <div class="progress-bar"></div>
-                <div class="progress-bar"></div>
-                <div class="progress-bar"></div>
-            </div>
-
-            <div class="card">
-            <!-- Step 0: Intro (Discord verification happens at the end, so the code stays fresh) -->
-            <div class="step active" data-step="0">
-                <div class="step-label">Step 1 of 6</div>
-                <h2>Answer a few quick questions</h2>
-                <p class="subtitle">Tell us about your experience. At the end you'll verify with Discord in one tap to submit — no passwords stored.</p>
-                <div class="btn-row">
-                    <button class="btn btn-primary" onclick="nextStep()" id="btn0">Get Started</button>
-                </div>
-                <p id="auth-status" style="font-size:13px; color:var(--text-secondary); margin-top:12px;"></p>
-            </div>
-
-            <!-- Step 1: Bot experience -->
-            <div class="step" data-step="1">
-                <div class="step-label">Step 2 of 6</div>
-                <h2>Have you used ticket purchasing software before?</h2>
-                <p class="subtitle">e.g. monitors, queue or cart tools</p>
-                <div class="options" data-question="q1">
-                    <div class="option" onclick="selectOption(this, 'q1', 'yes')">
-                        <div class="option-dot"></div><span>Yes</span>
-                    </div>
-                    <div class="option" onclick="selectOption(this, 'q1', 'no')">
-                        <div class="option-dot"></div><span>No</span>
-                    </div>
-                </div>
-                <input type="text" class="input-field other-input" id="q1_details" placeholder="Which tools? (required)" autocomplete="off">
-                <div class="btn-row">
-                    <button class="btn btn-back" onclick="prevStep()">Back</button>
-                    <button class="btn btn-primary" onclick="nextStep()" id="btn1" disabled>Continue</button>
-                </div>
-            </div>
-
-            <!-- Step 2: Ticket groups -->
-            <div class="step" data-step="2">
-                <div class="step-label">Step 3 of 6</div>
-                <h2>Are you currently a member of any ticket groups?</h2>
-                <div class="options" data-question="q2">
-                    <div class="option" onclick="selectOption(this, 'q2', 'yes')">
-                        <div class="option-dot"></div><span>Yes</span>
-                    </div>
-                    <div class="option" onclick="selectOption(this, 'q2', 'no')">
-                        <div class="option-dot"></div><span>No</span>
-                    </div>
-                </div>
-                <input type="text" class="input-field other-input" id="q2_details" placeholder="Which groups? (required)" autocomplete="off">
-                <div class="btn-row">
-                    <button class="btn btn-back" onclick="prevStep()">Back</button>
-                    <button class="btn btn-primary" onclick="nextStep()" id="btn2" disabled>Continue</button>
-                </div>
-            </div>
-
-            <!-- Step 3: Sales volume -->
-            <div class="step" data-step="3">
-                <div class="step-label">Step 4 of 6</div>
-                <h2>What is your annual ticket sales volume?</h2>
-                <div class="options" data-question="q3">
-                    <div class="option" onclick="selectOption(this, 'q3', 'none')">
-                        <div class="option-dot"></div><span>None</span>
-                    </div>
-                    <div class="option" onclick="selectOption(this, 'q3', 'under10k')">
-                        <div class="option-dot"></div><span>Under $10,000</span>
-                    </div>
-                    <div class="option" onclick="selectOption(this, 'q3', '10k-50k')">
-                        <div class="option-dot"></div><span>$10,000 – $50,000</span>
-                    </div>
-                    <div class="option" onclick="selectOption(this, 'q3', '50k-100k')">
-                        <div class="option-dot"></div><span>$50,000 – $100,000</span>
-                    </div>
-                    <div class="option" onclick="selectOption(this, 'q3', '100k-500k')">
-                        <div class="option-dot"></div><span>$100,000 – $500,000</span>
-                    </div>
-                    <div class="option" onclick="selectOption(this, 'q3', '500k+')">
-                        <div class="option-dot"></div><span>$500,000+</span>
-                    </div>
-                </div>
-                <div class="btn-row">
-                    <button class="btn btn-back" onclick="prevStep()">Back</button>
-                    <button class="btn btn-primary" onclick="nextStep()" id="btn3" disabled>Continue</button>
-                </div>
-            </div>
-
-            <!-- Step 4: How found us (partners + other) -->
-            <div class="step" data-step="4">
-                <div class="step-label">Step 5 of 6</div>
-                <h2>How did you find out about us?</h2>
-                <div class="options options-scroll" id="source-options"></div>
-                <input type="text" class="input-field other-input" id="source_other" placeholder="Please specify..." autocomplete="off">
-                <div class="btn-row">
-                    <button class="btn btn-back" onclick="prevStep()">Back</button>
-                    <button class="btn btn-primary" onclick="nextStep()" id="btn4" disabled>Continue</button>
-                </div>
-            </div>
-
-            <!-- Step 5: Confirm -->
-            <div class="step" data-step="5">
-                <div class="step-label">Step 6 of 6</div>
-                <h2>Ready to submit?</h2>
-                <p class="subtitle">Review your answers and submit your application.</p>
-                <div id="summary" style="font-size:14px; color:var(--text-secondary); line-height:1.8;"></div>
-                <div style="margin-top:24px; padding:16px; background:rgba(255,165,0,0.08); border:1px solid rgba(255,165,0,0.3); border-radius:8px;">
-                    <label style="display:flex; align-items:flex-start; gap:10px; cursor:pointer; font-size:14px; color:var(--text-primary); line-height:1.5;">
-                        <input type="checkbox" id="dm-confirm" onchange="toggleSubmitBtn()" style="margin-top:3px; width:18px; height:18px; cursor:pointer; flex-shrink:0;">
-                        <span>
-                            I confirm <b>Direct Messages from server members are enabled</b> on my Discord account. Otherwise the approval link will not reach me.
-                            <br>
-                            <a href="https://support.discord.com/hc/en-us/articles/217916488-Blocking-Privacy-Settings" target="_blank" rel="noopener" style="color:var(--accent); font-size:13px;">How to enable DMs →</a>
-                        </span>
-                    </label>
-                </div>
-                <div style="margin-top:12px; padding:16px; border:1px solid rgba(255,255,255,0.12); border-radius:8px;">
-                    <label style="display:flex; align-items:flex-start; gap:10px; cursor:pointer; font-size:14px; color:var(--text-primary); line-height:1.5;">
-                        <input type="checkbox" id="privacy-confirm" onchange="toggleSubmitBtn()" style="margin-top:3px; width:18px; height:18px; cursor:pointer; flex-shrink:0;">
-                        <span>I agree to the processing of my data to review this application, including automated checks and transfer outside Russia. <a href="https://encoresoft.io/privacy" target="_blank" rel="noopener" style="color:var(--accent);">Details</a></span>
-                    </label>
-                </div>
-                <div style="margin-top:12px; padding:16px; border:1px solid rgba(255,255,255,0.12); border-radius:8px;">
-                    <label style="display:flex; align-items:flex-start; gap:10px; cursor:pointer; font-size:14px; color:var(--text-primary); line-height:1.5;">
-                        <input type="checkbox" id="purchase-confirm" onchange="toggleSubmitBtn()" style="margin-top:3px; width:18px; height:18px; cursor:pointer; flex-shrink:0;">
-                        <span>If I buy a license, I agree that my data may be shared with banks and exchanges to confirm my payments. <a href="https://encoresoft.io/user_agreement" target="_blank" rel="noopener" style="color:var(--accent);">Details</a></span>
-                    </label>
-                </div>
-                <div class="btn-row">
-                    <button class="btn btn-back" onclick="prevStep()">Back</button>
-                    <button class="btn btn-primary" onclick="verifyAndSubmit()" id="btn5" disabled>Verify with Discord &amp; Submit</button>
-                </div>
-            </div>
-
-            <!-- Result: Verifying (shown on return from Discord while auto-submitting) -->
-            <div class="step result" data-step="verifying">
-                <div class="result-icon">⏳</div>
-                <h2>Verifying…</h2>
-                <p>Confirming your Discord and submitting your application…</p>
-            </div>
-
-            <!-- Result: Pending -->
-            <div class="step result" data-step="pending">
-                <div class="result-icon">⏳</div>
-                <h2>Application received</h2>
-                <p>Thanks! Your application is under review. You'll receive a DM from <b>Encore payment#3720</b> as soon as our team approves it (usually within 24 hours).</p>
-            </div>
-
-            <!-- Result: Auto-rejected -->
-            <div class="step result" data-step="auto-reject">
-                <div class="result-icon">&#128683;</div>
-                <h2 id="auto-reject-title">Not Eligible</h2>
-                <p id="auto-reject-reason">Unfortunately, your application can't be processed at this time.</p>
-                <p id="auto-reject-note" style="display:none; font-size:13px; color:var(--text-secondary); margin-top:12px;">This decision was made automatically. If you believe it is a mistake, email <a href="mailto:support@encoresoft.io" style="color:var(--accent);">support@encoresoft.io</a> and a person will review your application.</p>
-                <div class="btn-row">
-                    <button class="btn btn-primary" onclick="resetForm()" style="flex:1;">Start Over</button>
-                </div>
-            </div>
-
-            <!-- Result: Payment -->
-            <div class="step result" data-step="payment">
-                <div class="result-icon">&#127881;</div>
-                <h2>You're approved!</h2>
-                <p>Your application has been approved. We've sent you a link to the Encore dashboard (dash.encoreio.com) by DM from <b>Encore payment#3720</b> — open Discord and complete the payment in the dashboard.</p>
-            </div>
-        </div>
-        </div>
-        <footer style="margin-top:28px; text-align:center; font-size:12px; color:var(--text-secondary); line-height:1.8;">
-            © 2026 Encore ·
-            <a href="https://encoresoft.io" style="color:inherit;">encoresoft.io</a> ·
-            <a href="https://encoresoft.io/user_agreement" style="color:inherit;">Public Offer</a> ·
-            <a href="https://encoresoft.io/privacy" style="color:inherit;">Privacy Policy</a> ·
-            <a href="mailto:support@encoresoft.io" style="color:inherit;">support@encoresoft.io</a>
-        </footer>
-    </div>
+    </footer>
 
     <script>
         // ========== CONFIG (easy to change) ==========
@@ -648,6 +669,10 @@
             return selectedSource;
         }
 
+        function esc(v) {
+            return String(v == null ? '' : v).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+        }
+
         function showStep(step) {
             document.querySelectorAll('.step').forEach(s => s.classList.remove('active'));
             if (typeof step === 'string') {
@@ -665,12 +690,14 @@
                     const q2Line = answers.q2 === 'yes' && answers.q2_details
                         ? `yes — ${answers.q2_details}` : answers.q2;
                     document.getElementById('summary').innerHTML =
-                        `<div><b>Tools:</b> ${q1Line}</div>` +
-                        `<div><b>Groups:</b> ${q2Line}</div>` +
-                        `<div><b>Sales volume:</b> ${answers.q3}</div>` +
-                        `<div><b>Source:</b> ${getSourceValue()}</div>`;
+                        `<div><b>Tools:</b> ${esc(q1Line)}</div>` +
+                        `<div><b>Groups:</b> ${esc(q2Line)}</div>` +
+                        `<div><b>Sales volume:</b> ${esc(answers.q3)}</div>` +
+                        `<div><b>Source:</b> ${esc(getSourceValue())}</div>`;
                 }
             }
+            const card = document.querySelector('.hero__form');
+            if (card && window.innerWidth <= 960) card.scrollIntoView({ behavior: 'smooth', block: 'start' });
         }
 
         function nextStep() {
@@ -697,23 +724,20 @@
             showStep('auto-reject');
         }
 
+        const CONSENTS = ['dm-confirm', 'resident-confirm', 'privacy-confirm', 'purchase-confirm'];
+        function allConsents() {
+            return CONSENTS.every(id => { const el = document.getElementById(id); return el && el.checked; });
+        }
+
         function toggleSubmitBtn() {
-            const cb = document.getElementById('dm-confirm');
-            const pc = document.getElementById('privacy-confirm');
-            const pu = document.getElementById('purchase-confirm');
             const btn = document.getElementById('btn5');
-            if (btn) btn.disabled = !(cb.checked && pc.checked && pu.checked);
+            if (btn) btn.disabled = !allConsents();
         }
 
         // Final step: persist the answers, then verify with Discord LAST (redirect).
         // On return, handleCallback() restores these answers and calls postSubmission() with a fresh code.
         function verifyAndSubmit() {
-            const cb = document.getElementById('dm-confirm');
-            const pc = document.getElementById('privacy-confirm');
-            const pu = document.getElementById('purchase-confirm');
-            if (!cb || !cb.checked || !pc || !pc.checked || !pu || !pu.checked) {
-                return;
-            }
+            if (!allConsents()) return;
             const payload = {
                 q1: answers.q1,
                 q1_details: answers.q1_details || '',
@@ -778,9 +802,10 @@
                 const el = document.getElementById(id);
                 if (el) { el.value = ''; el.classList.remove('visible'); }
             });
+            CONSENTS.forEach(id => { const el = document.getElementById(id); if (el) el.checked = false; });
             sessionStorage.removeItem('wl_pending_submission');
             document.querySelectorAll('.option').forEach(o => o.classList.remove('selected'));
-            document.querySelectorAll('.btn-primary').forEach(b => b.disabled = true);
+            document.querySelectorAll('.step .btn-primary').forEach(b => b.disabled = true);
             document.getElementById('btn0').disabled = false;
             document.getElementById('btn0').textContent = 'Get Started';
             document.getElementById('btn0').onclick = nextStep;
