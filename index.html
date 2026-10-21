@@ -176,6 +176,8 @@
         .option-dot { width: 18px; height: 18px; border-radius: 50%; border: 2px solid #4a5358; flex-shrink: 0; transition: all 0.18s; display: flex; align-items: center; justify-content: center; }
         .option.selected .option-dot { border-color: var(--accent); box-shadow: 0 0 10px -2px var(--accent); }
         .option.selected .option-dot::after { content: ''; width: 8px; height: 8px; border-radius: 50%; background: var(--accent); }
+        .opt-group { font-family: var(--mono); font-size: 11px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--faint); margin: 6px 2px 0; }
+        .opt-group:first-child { margin-top: 0; }
         .other-input { margin-top: 10px; display: none; }
         .other-input.visible { display: block; }
         .options-scroll { max-height: 320px; overflow-y: auto; padding-right: 4px; }
@@ -392,6 +394,7 @@
                         <div class="step" data-step="4">
                             <div class="step-label">Step 5 of 6</div>
                             <h2>How did you find out about us?</h2>
+                            <p class="subtitle">Encore is promoted through <span id="partner-count">partner</span> ticket-broker communities under a referral program. If one of them referred you, select it — the partner is credited for the referral.</p>
                             <div class="options options-scroll" id="source-options"></div>
                             <input type="text" class="input-field other-input" id="source_other" placeholder="Please specify..." autocomplete="off">
                             <div class="btn-row">
@@ -413,11 +416,7 @@
                                 </label>
                                 <label class="consent">
                                     <input type="checkbox" id="privacy-confirm" onchange="toggleSubmitBtn()">
-                                    <span>I agree to the processing of my data to review this application, including automated checks and transfer to service providers in other countries. <a href="https://encoresoft.io/privacy" target="_blank" rel="noopener">Details</a></span>
-                                </label>
-                                <label class="consent">
-                                    <input type="checkbox" id="purchase-confirm" onchange="toggleSubmitBtn()">
-                                    <span>If I buy a license, I agree that my data may be shared with banks and exchanges to confirm my payments. <a href="https://encoresoft.io/privacy" target="_blank" rel="noopener">Details</a></span>
+                                    <span>I agree to the processing of my data to review this application and, if I buy, to confirm my payments to banks and exchanges — including automated checks and transfer to service providers in other countries. <a href="https://encoresoft.io/privacy" target="_blank" rel="noopener">Details</a></span>
                                 </label>
                             </div>
                             <p class="data-note">To prevent fraud we check your Discord account (ID, username, account age, shared partner servers), your connection (region, VPN) and your device.</p>
@@ -549,6 +548,12 @@
         const sourceContainer = document.getElementById('source-options');
         function buildSourceOptions(partners) {
             sourceContainer.innerHTML = '';
+            function addGroup(title) {
+                const div = document.createElement('div');
+                div.className = 'opt-group';
+                div.textContent = title;
+                sourceContainer.appendChild(div);
+            }
             function addOption(value) {
                 const div = document.createElement('div');
                 div.className = 'option';
@@ -556,8 +561,14 @@
                 div.innerHTML = '<div class="option-dot"></div><span>' + value.replace(/</g, '&lt;') + '</span>';
                 sourceContainer.appendChild(div);
             }
+            // Partner communities first: the referral program is how Encore is marketed (owner 21.10.2026)
+            if (partners.length) {
+                addGroup('Partner communities');
+                partners.forEach(addOption);
+                addGroup('Other');
+                document.getElementById('partner-count').textContent = partners.length + ' partner';
+            }
             CONFIG.otherSources.forEach(addOption);
-            partners.forEach(addOption);
             addOption('other');
         }
         fetch(CONFIG.apiUrl + CONFIG.partnersPath).then(r => r.json()).then(data => {
@@ -745,7 +756,7 @@
             showStep('auto-reject');
         }
 
-        const CONSENTS = ['dm-confirm', 'privacy-confirm', 'purchase-confirm'];
+        const CONSENTS = ['dm-confirm', 'privacy-confirm'];
         function allConsents() {
             return CONSENTS.every(id => { const el = document.getElementById(id); return el && el.checked; });
         }
