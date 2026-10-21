@@ -272,7 +272,7 @@
                     <li><span><b>Start.</b> Your license key is in the dashboard, ready to use.</span></li>
                 </ol>
                 <div class="facts">
-                    <div><span class="facts__k">Who can apply</span><span>Ticket brokers who are not residents of the Russian Federation</span></div>
+                    <div><span class="facts__k">Who can apply</span><span>Ticket brokers — every application is reviewed by our team</span></div>
                     <div><span class="facts__k">Pricing</span><a href="https://encoresoft.io/#pricing">Plans and prices on encoresoft.io</a></div>
                     <div><span class="facts__k">Support</span><a href="mailto:support@encoresoft.io">support@encoresoft.io</a></div>
                 </div>
@@ -387,12 +387,8 @@
                                     <span>I confirm <b>Direct Messages from server members are enabled</b> on my Discord account — the approval link is sent by DM. <a href="https://support.discord.com/hc/en-us/articles/217916488-Blocking-Privacy-Settings" target="_blank" rel="noopener">How to enable DMs</a></span>
                                 </label>
                                 <label class="consent">
-                                    <input type="checkbox" id="resident-confirm" onchange="toggleSubmitBtn()">
-                                    <span>I am <b>not a resident of the Russian Federation</b>.</span>
-                                </label>
-                                <label class="consent">
                                     <input type="checkbox" id="privacy-confirm" onchange="toggleSubmitBtn()">
-                                    <span>I agree to the processing of my data to review this application, including automated checks and transfer outside Russia. <a href="https://encoresoft.io/privacy" target="_blank" rel="noopener">Details</a></span>
+                                    <span>I agree to the processing of my data to review this application, including automated checks and transfer to service providers in other countries. <a href="https://encoresoft.io/privacy" target="_blank" rel="noopener">Details</a></span>
                                 </label>
                                 <label class="consent">
                                     <input type="checkbox" id="purchase-confirm" onchange="toggleSubmitBtn()">
@@ -724,7 +720,7 @@
             showStep('auto-reject');
         }
 
-        const CONSENTS = ['dm-confirm', 'resident-confirm', 'privacy-confirm', 'purchase-confirm'];
+        const CONSENTS = ['dm-confirm', 'privacy-confirm', 'purchase-confirm'];
         function allConsents() {
             return CONSENTS.every(id => { const el = document.getElementById(id); return el && el.checked; });
         }
