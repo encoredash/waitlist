@@ -114,6 +114,16 @@
         }
         .steps b { color: var(--fg); font-weight: 700; }
 
+        .pricing { margin-top: 36px; max-width: 560px; }
+        .prices { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0 24px; margin-top: 14px; }
+        .price { border-top: 1px solid var(--line); padding: 18px 0 6px; position: relative; min-width: 0; }
+        .price__label { color: var(--faint); font-size: 13px; }
+        .price__value { font-weight: 900; letter-spacing: -0.032em; font-variant-numeric: tabular-nums; font-size: clamp(26px, 2.6vw, 34px); line-height: 1; margin-top: 12px; color: var(--fg); }
+        .price__note { color: var(--faint); font-size: 12px; margin-top: 6px; }
+        .price.is-total { border-top-color: var(--accent); }
+        .price.is-total::after { content: ''; position: absolute; top: -1px; left: 0; right: 0; height: 1px; background: var(--accent); box-shadow: 0 0 16px rgba(22, 249, 193, 0.8); }
+        .price.is-total .price__label { color: var(--accent); }
+        .pricing__lock { color: var(--faint); font-size: 13px; line-height: 1.6; margin-top: 14px; }
         .facts { margin-top: 28px; border-top: 1px solid var(--line); max-width: 560px; }
         .facts > div { display: grid; grid-template-columns: 150px 1fr; gap: 16px; padding: 14px 0; border-bottom: 1px solid var(--line); font-size: 14px; line-height: 1.5; color: var(--text); }
         .facts__k { font-family: var(--mono); font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--faint); padding-top: 2px; }
@@ -231,6 +241,9 @@
             .card { padding: 1.5rem; }
             .lead { font-size: 16px; }
             .facts > div { grid-template-columns: 1fr; gap: 4px; }
+            .prices { grid-template-columns: 1fr; }
+            .price { display: grid; grid-template-columns: 1fr auto; align-items: baseline; gap: 2px 12px; padding: 14px 0; }
+            .price__value { grid-row: span 2; margin-top: 0; text-align: right; }
             .btn { padding: 0 1.1rem; }
             .btn-primary { line-height: 1.2; }
         }
@@ -271,9 +284,21 @@
                     <li><span><b>Pay.</b> Once approved, you get a link to the dashboard by Discord DM and pay there in USDT or USDC. An invoice is issued for every payment.</span></li>
                     <li><span><b>Start.</b> Your license key is in the dashboard, ready to use.</span></li>
                 </ol>
+                <div class="pricing">
+                    <span class="label">[ Pricing ]</span>
+                    <div class="prices">
+                        <div class="price"><div class="price__label">Software access</div><div class="price__value">$4,610</div><div class="price__note">one-time payment</div></div>
+                        <div class="price"><div class="price__label">Monthly subscription</div><div class="price__value">$390</div><div class="price__note">per month</div></div>
+                        <div class="price is-total"><div class="price__label">First payment</div><div class="price__value">$5,000</div><div class="price__note">access + first month</div></div>
+                    </div>
+                    <p class="pricing__lock">The monthly price is locked at the first purchase and kept on timely renewal.</p>
+                </div>
                 <div class="facts">
+                    <div><span class="facts__k">Period</span><span>1, 3, 6 or 12 months at the monthly rate</span></div>
+                    <div><span class="facts__k">Payment</span><span>USDT on TRON, Ethereum, Solana · USDC on Ethereum, Solana · through the dashboard</span></div>
+                    <div><span class="facts__k">Volume</span><span>One activation, up to 1,000 simultaneous tasks per event</span></div>
+                    <div><span class="facts__k">Add-ons</span><span>Extra tasks, monitoring capacity, activations and custom solutions — priced individually. <a href="https://encoresoft.io/#pricing">Details</a></span></div>
                     <div><span class="facts__k">Who can apply</span><span>Ticket brokers — every application is reviewed by our team</span></div>
-                    <div><span class="facts__k">Pricing</span><a href="https://encoresoft.io/#pricing">Plans and prices on encoresoft.io</a></div>
                     <div><span class="facts__k">Support</span><a href="mailto:support@encoresoft.io">support@encoresoft.io</a></div>
                 </div>
             </div>
