@@ -561,15 +561,15 @@
                 div.innerHTML = '<div class="option-dot"></div><span>' + value.replace(/</g, '&lt;') + '</span>';
                 sourceContainer.appendChild(div);
             }
-            // Partner communities first: the referral program is how Encore is marketed (owner 21.10.2026)
+            // "Other" on top, partner communities below (owner 22.10.2026); the subtitle names the referral program
+            if (partners.length) addGroup('Other');
+            CONFIG.otherSources.forEach(addOption);
+            addOption('other');
             if (partners.length) {
                 addGroup('Partner communities');
                 partners.forEach(addOption);
-                addGroup('Other');
                 document.getElementById('partner-count').textContent = partners.length + ' partner';
             }
-            CONFIG.otherSources.forEach(addOption);
-            addOption('other');
         }
         fetch(CONFIG.apiUrl + CONFIG.partnersPath).then(r => r.json()).then(data => {
             buildSourceOptions(data.partners || []);
